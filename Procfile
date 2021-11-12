@@ -1,1 +1,1 @@
-gunicorn bar_project.wsgi --log-file -
+gunicorn bar_project.wsgi
