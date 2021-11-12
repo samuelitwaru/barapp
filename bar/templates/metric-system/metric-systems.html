@@ -22,8 +22,9 @@
                                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
-                                <h4 class="pt-2 px-2">{%verbatim%}{{metricSystem.name}}{%endverbatim%}</h4>
+                                <h4 class="pt-2 px-2" v-if="metricSystem">{%verbatim%}{{metricSystem.name}}{%endverbatim%}</h4>
                             </div>
+
                             <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="top: 6.5rem;">
                                 <div class="offcanvas-header">
                                     <h3 class="offcanvas-title" id="offcanvasExampleLabel">Metric Systems</h3>
@@ -51,6 +52,7 @@
             					</div>
                             </div>
                 		</div>
+
                 		<div class="col-md-8 my-2" v-if="metricSystem">
                             <div class="p-2 border mb-2">
                                 <strong>Metric System:</strong> {%verbatim%}{{metricSystem.name}}{%endverbatim%}
@@ -84,7 +86,9 @@
                                             <td>
                     							<input class="form-control" type="number" v-model="multiplier" @keyup.enter="createMetric" :disabled="metricSystem.metrics.length==0" placeholder="express as base metric">
                                             </td>
-                                            <td></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" @click="createMetric">OK</button>
+                                            </td>
                     					</tr>
                                         <tr v-if="Object.keys(errors).length">
                                             <td>
@@ -118,14 +122,16 @@
             unit: '',
             symbol: '',
             multiplier: '',
-            // errors: {}
         },
         created: function() {
         	this.getMetricSystems()
         },
         computed: {
             baseMetric(){
-                return this.metricSystem.metrics.filter(metric=>metric.multiplier==1).shift() || {}
+                if (this.metricSystem.metrics) {
+                    return this.metricSystem.metrics.filter(metric=>metric.multiplier==1).shift() || {}
+                }
+                return {}
             },
             errors(){
                 errors = {}
@@ -160,6 +166,9 @@
 
             createMetric(){
                 if (Object.keys(this.errors).length) {
+                    return
+                }
+                if (this.unit=="" || (this.metricSystem.metrics.length && this.multiplier=="")){
                     return
                 }
                 data = {

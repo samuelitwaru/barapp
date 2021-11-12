@@ -23,7 +23,7 @@ class UpdateProductForm(CreateProductForm):
 
 	def clean(self):
 		barcode = self.data.get("barcode")
-		if Product.objects.exclude(id=self.product.id).filter(barcode=barcode).count():
+		if Product.objects.exclude(id=self.product.id).exclude(barcode=None).filter(barcode=barcode).count():
 			self.add_error('barcode', "Product with this barcode already exists")
 
 

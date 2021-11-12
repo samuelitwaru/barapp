@@ -34,7 +34,7 @@ urlpatterns = [
 	path('profile/update', update_current_user_profile, name='update_current_user_profile'),
 	path('profile/password/update', update_current_user_password, name='update_current_user_password'),
 
-	path('users', UsersPageView.as_view(), name='get_users'),
+	# path('users', UsersPageView.as_view(), name='get_users'),
 	path('users/create', create_user, name='create_user'),
 	path('users/<int:id>', update_user, name='update_user'),
 	path('users/<int:id>/permissions/update', update_user_permissions, name='update_user_permissions'),

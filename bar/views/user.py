@@ -8,18 +8,18 @@ from ..models import User, Profile
 from ..forms import UpdateUserPermissionsForm, UpdateUserForm, CreateUserForm
 
 
-class UsersPageView(TemplateView):
-	template_name = "user/users.html"
+# class UsersPageView(TemplateView):
+# 	template_name = "user/users.html"
 
-	def get_context_data(self, ** kwargs):
-		context = super().get_context_data(**kwargs)
-		context['users'] = User.objects.all()
-		return context
+# 	def get_context_data(self, ** kwargs):
+# 		context = super().get_context_data(**kwargs)
+# 		context['users'] = User.objects.all()
+# 		return context
 
 
-class UserDetailView(DetailView):
-	model = User
-	template_name = "user/user.html"
+# class UserDetailView(DetailView):
+# 	model = User
+# 	template_name = "user/user.html"
 
 
 
@@ -32,7 +32,7 @@ def create_user(request):
 			user = User.objects.create(username=data["email"], email=data["email"])
 			profile = Profile.objects.create(name=data["name"], email=data["email"], telephone=data["telephone"], user=user)
 			messages.success(request, "User created")
-			return redirect('bar:update_user', pk=user.id)
+			return redirect('bar:update_user', id=user.id)
 
 	context = {
 		"create_user_form": create_user_form
@@ -58,8 +58,8 @@ def update_user(request, id):
 		profile.save()
 		user.save()
 		messages.success(request, f"User updated.")
-		return redirect('bar:get_profile', id=profile.id)
-
+	return redirect('bar:get_profile', id=profile.id)
+	
 
 @login_required
 def update_user_permissions(request, id):

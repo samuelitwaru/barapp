@@ -58,7 +58,7 @@ def get_product(request, id):
 		return redirect('bar:get_product', id=product.id)
 
 	update_product_purchasing_form = UpdateProductPurchasingForm(data={
-		"purchase_metric": product.purchase_metric.id,
+		"purchase_metric": getattr(product.purchase_metric, "id", None),
 		"purchase_price": product.purchase_price,
 	}, product=product)
 	context = {
