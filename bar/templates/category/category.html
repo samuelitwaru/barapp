@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+            {% include 'index/nav.html' %}
+            {% include 'index/alert.html' %}
+            <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
+                <h2 class="m-0 pt-1">{{category}}</h2>
+            </div>
+
+            <div class="container-fluid m-0">
+            	<div class="container" align="center">
+                    <div style="max-width: 400px" align="left">
+                        <div class="p-2 border mb-2">
+                            <strong>Details</strong>
+                        </div>
+                        <form class="bg-light border border-left" method="POST" action="{% url 'bar:get_category' id=category.id %}">
+                            {% csrf_token %}
+                            {% render_field update_category_form.name class="form-control" %}
+                            <div class="p-2 border-top" align="right">
+                                <button class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+{% endblock %}

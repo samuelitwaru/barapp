@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+        <template>
+            {% include 'index/nav.html' %}
+            {% include 'index/alert.html' %}
+                <div class="d-flex bg-light p-2 justify-content-between  border-bottom">
+                    <h2>Metric Systems</h2>
+                    <button id="toggleButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createMetricSystemModal">
+                        Create Metric System
+                    </button>
+                    {% include 'metric-system/create-metric-system-modal.html' %}
+                </div>
+
+                <div class="container-fluid">
+                	<div class="row">
+                        <nav class="d-md-none navbar navbar-expand-lg navbar-light bg-light">
+                            <div class="d-flex">
+                                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <h4 class="pt-2 px-2">{%verbatim%}{{metricSystem.name}}{%endverbatim%}</h4>
+                            </div>
+                            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="top: 6.5rem;">
+                                <div class="offcanvas-header">
+                                    <h3 class="offcanvas-title" id="offcanvasExampleLabel">Metric Systems</h3>
+                                    <button type="button" class="btn-close btn-sm text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body p-0">
+                                    <div class="list-group rounded-0">
+                                        <button v-for="system in metricSystems" href="#" class="list-group-item list-group-item-action d-flex justify-content-between" :class="{'active':system==metricSystem}" @click="setMetricSystem(system)" data-bs-dismiss="offcanvas">
+                                            {%verbatim%}{{system.name}}{%endverbatim%}
+                                            <span>{%verbatim%}{{system.metrics.length}} metric(s){%endverbatim%}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </nav>
+
+
+                		<div class="col-md-4 my-2">
+                            <div class="d-md-block collapse navbar-collapse" id="navbarSupportedContent">
+                    			<div class="list-group">
+                    				<button v-for="system in metricSystems" href="#" class="list-group-item list-group-item-action d-flex justify-content-between" :class="{'active':system==metricSystem}" @click="setMetricSystem(system)">
+                    					{%verbatim%}{{system.name}}{%endverbatim%}
+                                        <span>{%verbatim%}{{system.metrics.length}} metric(s){%endverbatim%}</span>
+                    				</button>
+            					</div>
+                            </div>
+                		</div>
+                		<div class="col-md-8 my-2" v-if="metricSystem">
+                            <div class="p-2 border mb-2">
+                                <strong>Metric System:</strong> {%verbatim%}{{metricSystem.name}}{%endverbatim%}
+                                <hr>
+                                <strong>Base Meric</strong>: {%verbatim%}{{baseMetric.unit}} - {{baseMetric.symbol}}{%endverbatim%}
+                            </div>
+                            <div class="overflow-auto">
+                    			<table class="table table-bordered">
+                    				<thead>
+                                        <th>Unit</th>
+                    					<th>Symbol</th>
+                                        <th>Mutiplier</th>
+                    					<th></th>
+                    				</thead>
+                    				<tbody>
+                    					<tr v-for="metric in metricSystem.metrics">
+                    						<td>{%verbatim%}{{metric.unit}}({{metric.symbol}}){%endverbatim%}</td>
+                                            <td>{%verbatim%}{{metric.symbol}}{%endverbatim%}</td>
+                                            <td>{%verbatim%}{{metric.multiplier}}{%endverbatim%}</td>
+                    						<td><button class="btn btn-danger btn-sm" @click="deleteMetric(metric)">&times;</button></td>
+                    					</tr>
+                    				</tbody>
+                    				<tfoot>
+                    					<tr>
+                    						<td>
+                    							<input class="form-control" type="text" name="unit" v-model="unit" @keyup.enter="createMetric">
+                    						</td>
+                    						<td>
+                                                <input class="form-control" type="text" name="symbol" v-model="symbol" @keyup.enter="createMetric">
+                    						</td>
+                                            <td>
+                    							<input class="form-control" type="number" v-model="multiplier" @keyup.enter="createMetric" :disabled="metricSystem.metrics.length==0" placeholder="express as base metric">
+                                            </td>
+                                            <td></td>
+                    					</tr>
+                                        <tr v-if="Object.keys(errors).length">
+                                            <td>
+                                                <small class="text-danger">{%verbatim%}{{errors.unit}}{%endverbatim%}</small>
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                                <small class="text-danger">{%verbatim%}{{errors.multiplier}}{%endverbatim%}</small>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                    				</tfoot>
+                    			</table>
+                            </div>
+                		</div>
+                	</div>
+                </div>
+        </template>
+    </div>
+{% endblock %}
+
+{% block vue %}
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+        	metricSystems: [],
+        	metricSystem: null,
+
+            unit: '',
+            symbol: '',
+            multiplier: '',
+            // errors: {}
+        },
+        created: function() {
+        	this.getMetricSystems()
+        },
+        computed: {
+            baseMetric(){
+                return this.metricSystem.metrics.filter(metric=>metric.multiplier==1).shift() || {}
+            },
+            errors(){
+                errors = {}
+                for (var i = 0; i < this.metricSystem.metrics.length; i++) {
+                    metric = this.metricSystem.metrics[i]
+                    if (metric.unit == this.unit) {
+                        errors["unit"] = "Unit already exists"
+                    }
+                    if (metric.multiplier==this.multiplier){
+                        errors["multiplier"] = "Multipler already used"
+                    }
+                }
+                return errors
+            },
+        },
+        methods: {
+            getMetricSystems(){
+            	fetch("/api/metric-systems/")
+            	.then(r => r.json())
+                .then(data => {
+                    this.metricSystems = data.results
+                    this.setMetricSystem()
+                })
+            },
+
+            setMetricSystem(metricSystem=null){
+        		if (metricSystem){this.metricSystem = metricSystem}
+        		else if(this.metricSystems.length){
+        			this.metricSystem = this.metricSystems[0]
+        		}
+        	},
+
+            createMetric(){
+                if (Object.keys(this.errors).length) {
+                    return
+                }
+                data = {
+                    unit: this.unit,
+                    symbol: this.symbol,
+                    multiplier: (this.multiplier==""?1:this.multiplier),
+                    metric_system: this.metricSystem.id
+                }
+                this.unit=""; this.symbol=""; this.multiplier="";
+                fetch(`/api/metrics/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "X-CSRFToken":'{{csrf_token}}'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    this.metricSystem.metrics.push(data)
+                })
+            },
+
+            deleteMetric(metric){
+                if (confirm(`Delete the metric ${metric.unit}?`)) {
+                    fetch(`/api/metrics/${metric.id}/`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "X-CSRFToken":'{{csrf_token}}'
+                        },
+                    })
+                    .then((response)=>{
+                        if(response.ok){
+                            this.metricSystem.metrics = this.metricSystem.metrics.filter(m=>m.id!=metric.id)
+                        }
+                    })
+                    
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

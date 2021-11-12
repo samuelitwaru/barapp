@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+	<div id="app">
+        <div class="d-block" :class="{'d-none':!showLoading}">
+            {% include 'index/loading.html' %}
+        </div>
+        <template>
+            {% include 'index/nav.html' %}
+            {% include 'order/cart.html' %}
+            {% include 'product/products-offcanvas.html' %}
+        </template>
+    </div>
+
+{% endblock %}
+
+
+{% block vue %}
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+        	products: [],
+        	displayedProducts: [],
+        	orders: {},
+        	categories: [],
+        	searchString: '',
+            showLoading: true,
+        },
+        created: function() {
+        	this.getProducts()
+        	this.getCategories()
+            this.showLoading = false
+        },
+        computed: {
+            
+        },
+        methods: {
+            getProducts(){
+            	fetch("/api/products")
+            	.then(r => r.json())
+                .then(data => {
+                	this.setProducts(data.results)
+                })
+                .then(()=>{
+                	this.displayedProducts = this.products
+                })
+            },
+
+            getCategories(){
+            	fetch("/api/categories?platform=web")
+            	.then(r => r.json())
+                .then(data => {
+                	this.categories = data.results
+                })
+            },
+
+            setProducts(products){
+                this.products = products.map(product=>{
+                    product["orderQuantity"] = 0
+                    product["orderSaleGuide"] = product.sale_guides[0] || null
+                    return product
+                })
+            },
+
+            addProductQuantity(product){
+            	if (!this.orders[product.id]){
+            		this.orders[product.id] = product
+            	} 
+            	this.orders[product.id].orderQuantity += 1
+            },
+
+            subtractProductQuantity(product){
+            	if (!this.orders[product.id]){
+            		return
+            	} 
+            	this.orders[product.id].orderQuantity -= 1
+            	if (product.orderQuantity == 0){
+            		delete this.orders[product.id]
+            	}
+            },
+
+            removeFromCart(product){
+            	this.orders[product.id].orderQuantity = 0
+            	delete this.orders[product.id]
+            },
+
+            isOrdered(product){
+        		return Boolean(this.orders[product.id])
+        	},
+
+            totalPrice(){
+                total = 0
+                orders = Object.values(this.orders)
+                for (var i = 0; i < orders.length; i++) {
+                    product = orders[i]
+                    total += product.orderQuantity*product.orderSaleGuide.price
+                }
+                return total
+            },
+
+        	showCategory(category=null){
+        		if (category) {
+        			this.displayedProducts = this.products.filter(product=>product.categories.includes(category.id))
+        			return
+        		}
+        		this.displayedProducts = this.products
+        	},
+
+            changeSaleGuide(event, product){
+                saleGuideId = event.target.value
+                saleGuide = product.sale_guides.filter(saleGuide => saleGuide.id==saleGuideId).shift()
+                if (!this.orders[product.id]) {
+                    this.addProductQuantity(product)
+                }
+                this.orders[product.id]['orderSaleGuide'] = saleGuide
+            },
+
+        	searchProduct(){
+        		results = []
+        		for (var i=0; i<this.products.length; i++){
+        			product = this.products[i]
+        			if (product.name.toLowerCase().search(this.searchString.toLowerCase()) > -1){
+        				results.push(product)
+        			}
+        		}
+        		this.displayedProducts = results
+        	},
+
+        	createOrders(){
+                this.showLoading = true
+        		fetch(`/api/orders/create_orders/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "X-CSRFToken":'{{csrf_token}}'
+                    },
+                    body: JSON.stringify(Object.values(this.orders))
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    if (data.status == "success"){
+                        alert(data.detail)
+                        this.showLoading = false
+                        this.orders = {}
+                        this.setProducts(this.products)
+                    }
+                })
+        	}
+            
+        }
+    });
+</script>
+{% endblock %}

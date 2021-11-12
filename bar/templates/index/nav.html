@@ -1,0 +1,78 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-primary text-light">
+    <div class="container-fluid">
+        <div class="my-auto">
+            <h3 class="d-inline m-0" href="">BarApp</h3>
+        </div>
+    
+        <div>
+            <a href="{% url 'bar:create_orders' %}" class="btn btn-primary f-10"><strong>+</strong></span></a>
+            <a href="{% url 'bar:orders' %}" class="btn btn-primary"><span class="fa fa-bell-o fa-2x"></span></a>
+            <a href="{% url 'bar:get_current_user_profile' %}" class="btn btn-primary"><span class="fa fa-user-o fa-2x"></span></a>
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><span class="navbar-toggler-icon"></span></button>
+        </div>
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header bg-primary">
+        <h4 id="offcanvasRightLabel" class="text-white text-center flex-fill">Menu</h4>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="d-flex flex-wrap justify-content-around">
+            <a href="{% url 'bar:create_orders' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img class="img-thumbnail" src="{% static 'img/new-order.png' %}" style="height: 5rem; width: 5rem"/>
+                    New Order
+                </div>
+            </a>
+            
+            <a href="{% url 'bar:orders' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img class="img-thumbnail" src="{% static 'img/orders.jpeg' %}" style="height: 5rem; width: 5rem"/>
+                    Orders
+                </div>
+            </a>
+            
+            <a href="{% url 'bar:get_current_user_profile' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/user.png' %}" style="height: 5rem; width: 5rem"/>
+                    Your Account
+                </div>
+            </a>
+
+            <a href="{% url 'bar:logout' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/logout.jpg' %}" style="height: 5rem; width: 5rem"/>
+                    Logout
+                </div>
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="d-flex flex-wrap justify-content-around">
+            <a href="{% url 'bar:get_products' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/products.png' %}" style="height: 5rem; width: 5rem"/>
+                    Products
+                </div>
+            </a>
+
+            <a href="{% url 'bar:get_metric_systems' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/metrics.png' %}" style="height: 5rem; width: 5rem"/>
+                    Metrics
+                </div>
+            </a>
+
+            <a href="{% url 'bar:get_profiles' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/users.png' %}" style="height: 5rem; width: 5rem"/>
+                    Users
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

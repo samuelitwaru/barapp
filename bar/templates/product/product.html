@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+        <template>
+            {% include 'index/nav.html' %}
+            {% include 'index/alert.html' %}
+            <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
+                <h2>{{object}}</h2>
+            </div>
+
+
+            <div class="container-fluid">
+                <form action="{% url 'bar:update_product_categories' id=object.id %}" method="POST" class="d-flex justify-content-between flex-nowrap py-1 overflow-auto">
+                    {% csrf_token %}
+                    <div class="border d-flex flex-nowrap py-1 overflow-auto">
+                        {% for field in update_product_categories_form %}
+                            {% render_field field %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div class="px-2 my-auto">
+                        <button type="submit" class="btn btn-sm btn-primary" >Save</button>
+                    </div>
+                </form>
+
+            	<div class="row mt-2">
+            		<div class="col-md-6 mb-2">
+                        <div class="p-2 border mb-2">
+                            <h3>Details</h3>
+                        </div>
+                        <form class="bg-light border border-left" method="POST" action="{% url 'bar:get_product' id=object.id %}" >
+                            {% csrf_token %}
+                            {% render_field update_product_form.name class="form-control" %}
+                            {% render_field update_product_form.brand class="form-control" %}
+                            {% render_field update_product_form.barcode class="form-control" %}
+                            {% render_field update_product_form.description class="form-control" %}
+                            {% render_field update_product_form.metric_system class="form-control" %}
+                            <div class="p-2" align="right">
+                                <button class="btn btn-primary">Update Product Details</button>
+                            </div>
+                        </form>
+                    </div>
+            		<div class="col-md-6">
+                        <div class="p-2 border mb-2">
+                            <h3>Purchasing</h3>
+                        </div>
+
+                        <form class="bg-light border border-left" action="{% url 'bar:update_product_purchasing' id=object.id %}" method="POST">
+                            {% csrf_token %}
+                            {% render_field update_product_purchasing_form.purchase_metric class="form-control" %}
+                            {% render_field update_product_purchasing_form.purchase_price class="form-control" %}
+                            <div class="p-2" align="right">
+                                <button class="btn btn-primary">Update Purchasing Details</button>
+                            </div>
+                        </form>
+
+                        <div class="p-2 border mb-2">
+                            <h3>Sale Guides</h3>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <th>Metric</th>
+                                <th>Price</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="saleGuide in product.sale_guides">
+                                    <td>{%verbatim%}{{saleGuide.metric.unit}}{%endverbatim%}</td>
+                                    <td>{%verbatim%}{{saleGuide.price}}{%endverbatim%}</td>
+                                    <td><button class="btn btn-danger btn-sm" @click="deleteSaleGuide(saleGuide)">&times;</button></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" type="text" name="metric" v-model="metric" @keyup.enter="createSaleGuide">
+                                            <option :value="metric.id" v-for="metric in metrics">
+                                                {%verbatim%}{{metric.unit}}{%endverbatim%}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number" name="price" v-model="price" @keyup.enter="createSaleGuide">
+                                    </td>
+                                    <td><button class="btn btn-primary btn-sm" @click="createSaleGuide">OK</button></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+            		</div>
+            	</div>
+            </div>
+        </template>
+    </div>
+{% endblock %}
+
+{% block vue %}
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+        	product: {},
+            metrics: [],
+            metric: '',
+            price: '',
+        },
+        created: function() {
+        	this.getProduct()
+            this.getProductMetrics()
+        },
+        computed: {
+            errors(){
+                errors = {}
+                // for (var i = 0; i < this.metricSystem.metrics.length; i++) {
+                //     metric = this.metricSystem.metrics[i]
+                //     if (metric.unit == this.unit) {
+                //         errors["unit"] = "Unit already exists"
+                //     }
+                //     if (metric.multiplier==this.multiplier){
+                //         errors["multiplier"] = "Multipler already used"
+                //     }
+                // }
+                return errors
+            },
+        },
+        methods: {
+            getProduct(){
+            	fetch(`/api/products/{{object.id}}`)
+            	.then(r => r.json())
+                .then(data => {
+                    this.product = data
+                })
+            },
+
+            getProductMetrics(){
+                fetch(`/api/metrics/?metric_system={{object.metric_system.id}}`)
+                .then(r => r.json())
+                .then(data => {
+                    this.metrics = data.results
+                })
+            },
+
+            createSaleGuide(){
+                if (Object.keys(this.errors).length) {
+                    return
+                }
+                data = {
+                    metric_id: this.metric,
+                    price: this.price,
+                    product: this.product.id
+                }
+
+                console.log(data)
+                this.metric=""; this.price="";
+                fetch(`/api/sale-guides/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "X-CSRFToken":'{{csrf_token}}'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    this.product.sale_guides.push(data)
+                })
+            },
+
+            deleteSaleGuide(saleGuide){
+                console.log(saleGuide)
+                if (confirm(`Delete the sale guide ${saleGuide.price}@${saleGuide.metric.unit}?`)) {
+                    fetch(`/api/sale-guides/${saleGuide.id}/`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "X-CSRFToken":'{{csrf_token}}'
+                        },
+                    })
+                    .then((response)=>{
+                        if(response.ok){
+                            this.product.sale_guides = this.product.sale_guides.filter(
+                                sg=>sg.id!=saleGuide.id
+                                )
+                        }
+                    })
+                    
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

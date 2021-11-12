@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+        {% include 'index/nav.html' %}
+        {% include 'index/alert.html' %}
+    </div>
+
+    <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
+        <h2 class="m-0 pt-2">Users</h2>
+        <a href="{% url 'bar:create_user' %}" class="btn btn-primary">Create User</a>
+    </div>
+
+    <div class="overflow-auto">
+        <table class="table table-bordered table-hover">
+        	<thead>
+        		<th>Name</th>
+        		<th>Email</th>
+                <th>Telephone</th>
+        		<th></th>
+        	</thead>
+
+        	<tbody>
+        		{% for profile in profiles %}
+        		<tr>
+                    <td><a href="{% url 'bar:get_profile' id=profile.id %}" class="nav-link p-0">{{profile.name}}</a></td>
+        			<td>{{profile.email}}</td>
+        			<td>{{profile.telephone}}</td>
+        			<td><a href="{% url 'bar:get_profile' id=profile.id %}" class="btn btn-primary btn-sm">View</a></td>
+        		</tr>
+        		{% endfor %}
+        	</tbody>
+        </table>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+        {% include 'index/nav.html' %}
+
+        <ul class="border sticky-top bg-light justify-content-between nav nav-pills p-2" id="pills-tab" role="tablist" align="center">
+            <h3 class="my-auto flex-fill" align="left">Account</h3>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if tab == 'profile' %}active{% endif %}" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="true">PROFILE</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if tab == 'password' %}active{% endif %}" id="pills-password-tab" data-bs-toggle="pill" data-bs-target="#pills-password" type="button" role="tab" aria-controls="pills-password" aria-selected="false">PASSWORD</button>
+            </li>
+        </ul>
+        {% include 'index/alert.html' %}
+
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade {% if tab == 'profile' %}show active{% endif %}" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" align="center">
+            	<div class="card mt-3" style="width: 20rem">
+	            	<form method="POST" action="{% url 'bar:update_current_user_profile' %}" align="left">
+						{% csrf_token %}
+						{% render_field update_profile_form.name %}
+						{% render_field update_profile_form.email %}
+						{% render_field update_profile_form.telephone tel_code=update_profile_form.tel_code %}
+						<div class="p-2" align="right">
+							<button class="btn btn-primary">Save</button>
+						</div>
+					</form>
+				</div>
+                
+            </div>
+
+            <div class="tab-pane fade {% if tab == 'password' %}show active{% endif %}" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab" align="center">
+            	<div class="card mt-3" style="width: 20rem">
+	                <form class="m-0" method="POST" action="{% url 'bar:update_current_user_password' %}" align="left">
+						{% csrf_token %}
+						{% render_field update_password_form.current_password %}
+						{% render_field update_password_form.new_password %}
+						{% render_field update_password_form.confirm_password %}
+						<div class="p-2" align="right">
+							<button class="btn btn-primary">Save</button>
+						</div>
+					</form>
+				</div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

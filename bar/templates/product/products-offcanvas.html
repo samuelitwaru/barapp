@@ -1,0 +1,57 @@
+<div class="offcanvas offcanvas-end p-2" tabindex="-1" id="productsOffCanvas" aria-labelledby="offcanvasRightLabel" style="top: 3.4rem;">
+    <div class="offcanvas-header px-2">
+		<h5 class="modal-title" id="exampleModalLabel">Available Products</h5>
+		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+
+    <div class="border border-primary rounded p-1">
+		<div class="d-flex m-0 p-1">
+			<input class="form-control form-control-lg border-primary" type="search" placeholder="Search" aria-label="Search" v-model="searchString" v-on:input="searchProduct">
+		</div>
+		
+		<div class="d-flex flex-nowrap py-1 overflow-auto hide-scroll">
+		 	<div class="p-2 mx-1 btn btn-outline-primary text-nowrap" @click="showCategory()">All</div>
+
+		 	<div class="p-2 mx-1 btn btn-outline-primary text-nowrap" v-for="category in categories" @click="showCategory(category)">
+		 		{%verbatim%}{{category.name}}{%endverbatim%}
+		 	</div>
+		</div>
+	</div>
+
+    <div class="offcanvas-body p-0">
+        <table class="table table-borderless">
+			<tr v-for="product in displayedProducts" v-if="product.sale_guides.length" class="rounded" :class="{'table-primary':isOrdered(product)}">
+				<td class="p-2">
+					<p class="card-text skeleton-loader m-auto">{%verbatim%}{{product.name}}{%endverbatim%}</p>
+				</td>
+				<td class="p-2 text-center">
+					<p class="m-0" v-if="product.sale_guides.length==1">
+						<strong v-for="sale_guide in product.sale_guides" class="skeleton-loader">
+							{%verbatim%}{{sale_guide.price}}@{{sale_guide.metric.unit}}{%endverbatim%}
+						</strong>
+					</p>
+					<p class="m-0" v-if="product.sale_guides.length>1">
+						<select @change="changeSaleGuide($event, product)" class="form-control form-control-sm">
+		            		<option v-for="sale_guide in product.sale_guides" :value="sale_guide.id">
+		            			{%verbatim%}{{sale_guide.price}}@{{sale_guide.metric.unit}}{%endverbatim%}
+		            		</option>
+		            	</select>
+		            </p>	
+				</td>
+				<td class="p-2">
+					<button style="height: 1.5rem" class="btn btn-primary btn-sm" :disabled="product.orderQuantity==0" @click="subtractProductQuantity(product)">-</button>
+				</td>
+				<td class="p-2">
+					{%verbatim%}{{product.orderQuantity}}{%endverbatim%}
+				</td>
+				<td class="p-2">
+					<button style="height: 1.5rem" class="btn btn-primary btn-sm" @click="addProductQuantity(product)">+</button>
+				</td>
+			</tr>
+		</table>
+    </div>
+
+    <div class="modal-footer p-2">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Done</button>
+	</div>
+</div>
