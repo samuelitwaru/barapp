@@ -80,11 +80,15 @@ WSGI_APPLICATION = 'bar_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ["BAR_DATABASE_NAME"],
-        'USER': os.environ["BAR_DATABASE_USER"],
-        'PASSWORD': os.environ["BAR_DATABASE_PASSWORD"]
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    # 'production': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.environ["BAR_DATABASE_NAME"],
+    #     'USER': os.environ["BAR_DATABASE_USER"],
+    #     'PASSWORD': os.environ["BAR_DATABASE_PASSWORD"]
+    # }
 }
 
 
