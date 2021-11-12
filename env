@@ -1,0 +1,4 @@
+export BAR_DATABASE_USER=root
+export BAR_DATABASE_PASSWORD=bratz123
+export BAR_DATABASE_ADDRESS=localhost:3306
+export BAR_DATABASE_NAME=bar
