@@ -8,43 +8,56 @@
         {% include 'index/alert.html' %}
 
         <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
-	        <h2 class="m-0">{{profile}}</h2>
+	        <h3 class="my-auto"><a href="{% url 'bar:get_profiles' %}" class="nav-link px-1 d-inline">Users</a> / {{profile}}</h3>
 	    </div>
+		<div class="container">
+	        <div class="row">
 
-        <div class="row container">
+	        	<div class="col-md-6">
+	        		<div class="p-2 border mb-2">
+		                <h4 class="my-auto">User Profile</h4>
+		            </div>
+		        	<form method="POST" class="border" action="{% url 'bar:update_user' id=profile.user_id %}" align="left">
+						{% csrf_token %}
+						{% render_field update_user_form.name %}
+						{% render_field update_user_form.email %}
+						{% render_field update_user_form.telephone tel_code=update_user_form.tel_code %}
+						{% render_field update_user_form.is_active %}
+						<div class="p-2" align="right">
+							<button class="btn btn-primary">Update User Profile</button>
+						</div>
+					</form>
+				</div>
 
-        	<div class="col-md-6">
-        		<div class="p-2 border mb-2">
-	                <h3>User Profile</h3>
-	            </div>
-	        	<form method="POST" class="border" action="{% url 'bar:update_user' id=profile.user_id %}" align="left">
-					{% csrf_token %}
-					{% render_field update_user_form.name %}
-					{% render_field update_user_form.email %}
-					{% render_field update_user_form.telephone tel_code=update_user_form.tel_code %}
-					{% render_field update_user_form.is_active %}
-					<div class="p-2" align="right">
-						<button class="btn btn-primary">Update User Profile</button>
-					</div>
-				</form>
-			</div>
-
-        	<div class="col-md-6">
-        		<div class="p-2 border mb-2">
-	                <h3>User Permissions</h3>
-	            </div>
-	            <form method="POST" class="border" action="{% url 'bar:update_user_permissions' id=profile.user_id %}" align="left">
-	            	{% csrf_token %}
-					{% render_field update_user_permissions_form.can_make_orders %}
-					{% render_field update_user_permissions_form.can_mark_orders_as_ready %}
-					{% render_field update_user_permissions_form.can_mark_orders_as_served %}
-				
-					<div class="p-2" align="right">
-						<button class="btn btn-primary">Update User Permissions</button>
-					</div>
-				</form>
-        	</div>
-        </div>
+	        	<div class="col-md-6">
+	        		<div class="p-2 border mb-2">
+		                <h4 class="my-auto">User Password</h4>
+		            </div>
+		            <form method="POST" class="border" action="{% url 'bar:update_user_password' id=profile.user_id %}" align="left">
+		            	{% csrf_token %}
+						{% render_field update_user_password_form.new_password %}
+						{% render_field update_user_password_form.confirm_password %}
+					
+						<div class="p-2" align="right">
+							<button class="btn btn-primary">Update User Password</button>
+						</div>
+					</form>
+	        		<div class="p-2 border mb-2">
+		                <h4 class="my-auto">User Permissions</h4>
+		            </div>
+		            <form method="POST" class="border" action="{% url 'bar:update_user_permissions' id=profile.user_id %}" align="left">
+		            	{% csrf_token %}
+						{% render_field update_user_permissions_form.can_make_orders %}
+						{% render_field update_user_permissions_form.can_mark_orders_as_ready %}
+						{% render_field update_user_permissions_form.can_mark_orders_as_served %}
+					
+						<div class="p-2" align="right">
+							<button class="btn btn-primary">Update User Permissions</button>
+						</div>
+					</form>
+	        	</div>
+	        </div>
+	    </div>
 
     </div>
 

@@ -83,7 +83,7 @@ def render_field(field, **kwargs):
 			template_file = 'checkbox-field.html'
 		elif field.field.widget.input_type == 'radio':
 			template_file = 'radio-field.html'
-		elif field.field.widget.input_type == 'tel':
+		elif field.field.widget.input_type == 'number':
 			tel_code = kwargs.pop("tel_code", None)
 			if tel_code:
 				context["tel_code_widget"] = tel_code.as_widget()

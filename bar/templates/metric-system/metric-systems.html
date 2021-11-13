@@ -4,6 +4,10 @@
 
 {% block body %}
 	<div id="app">
+        <div class="d-block" :class="{'d-none':!showLoading}">
+            {% include 'index/loading.html' %}
+        </div>
+
         <template>
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
@@ -122,9 +126,11 @@
             unit: '',
             symbol: '',
             multiplier: '',
+            showLoading: true,
         },
         created: function() {
         	this.getMetricSystems()
+            this.showLoading = false
         },
         computed: {
             baseMetric(){
@@ -171,6 +177,7 @@
                 if (this.unit=="" || (this.metricSystem.metrics.length && this.multiplier=="")){
                     return
                 }
+                this.showLoading = true
                 data = {
                     unit: this.unit,
                     symbol: this.symbol,
@@ -189,11 +196,13 @@
                 .then(response=>response.json())
                 .then(data=>{
                     this.metricSystem.metrics.push(data)
+                    this.showLoading = false
                 })
             },
 
             deleteMetric(metric){
                 if (confirm(`Delete the metric ${metric.unit}?`)) {
+                    this.showLoading = true
                     fetch(`/api/metrics/${metric.id}/`, {
                         method: "DELETE",
                         headers: {
@@ -205,6 +214,7 @@
                         if(response.ok){
                             this.metricSystem.metrics = this.metricSystem.metrics.filter(m=>m.id!=metric.id)
                         }
+                        this.showLoading = false
                     })
                     
                 }

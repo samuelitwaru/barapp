@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from ..models import Order, Profile
-from ..forms import UpdateProfileForm, UpdateUserForm, UpdatePasswordForm, UpdateUserPermissionsForm
+from ..forms import UpdateProfileForm, UpdateUserForm, UpdatePasswordForm, UpdateUserPermissionsForm, UpdateUserPasswordForm
 from ..utils import split_telephone
 
 
@@ -21,6 +21,7 @@ def get_profile(request, id):
 	profile = Profile.objects.filter(id=id).first()
 	user = profile.user
 	tel_code, telephone = split_telephone(profile.telephone)
+	update_user_password_form = UpdateUserPasswordForm()
 	update_user_form = UpdateUserForm(data={"name": profile.name, "email":profile.email, "tel_code":tel_code, "telephone":telephone, "is_active":profile.user.is_active}, profile=profile)
 	update_user_permissions_form = UpdateUserPermissionsForm({
 			"can_make_orders": user.has_perm('bar.can_make_orders'),
@@ -30,6 +31,7 @@ def get_profile(request, id):
 	context = {
 		"profile": profile,
 		"update_user_form": update_user_form,
+		"update_user_password_form": update_user_password_form,
 		"update_user_permissions_form": update_user_permissions_form,
 	}
 	return render(request, 'profile/profile.html', context)

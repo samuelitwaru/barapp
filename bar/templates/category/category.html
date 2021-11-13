@@ -6,8 +6,8 @@
 	<div id="app">
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
-            <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
-                <h2 class="m-0 pt-1">{{category}}</h2>
+            <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
+                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / Products Categories / {{category}}</h3>
             </div>
 
             <div class="container-fluid m-0">

@@ -8,20 +8,20 @@ class UpdateProfileForm(forms.Form):
 	name = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}))
 	email = forms.EmailField(widget=forms.TextInput(attrs={"class":"form-control"}))
 	tel_code = forms.CharField(required=False, widget=forms.Select(choices=TEL_CODES, attrs={"class":"form-control"}))
-	telephone = forms.CharField(required=False, widget=forms.TextInput(attrs={"placeholder":"eg 781567890", "type":"tel", "class":"form-control"}))
+	telephone = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={"placeholder":"eg 781567890", "class":"form-control"}))
+
 
 	def __init__(self, profile, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.profile = profile
 		self.user = self.profile.user
-		self.fields["name"].default = self.profile.name
+		# self.fields["name"].default = self.profile.name
 
 	def clean(self):
 		cleaned_data = super().clean()
 		email = cleaned_data.get("email")
 		tel_code = cleaned_data.get("tel_code")
 		telephone = cleaned_data.get("telephone")
-
 
 		if User.objects.exclude(username=self.user.username).filter(username=email).count():
 			raise forms.ValidationError("A user with this email address already exists.")

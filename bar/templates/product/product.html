@@ -4,11 +4,14 @@
 
 {% block body %}
 	<div id="app">
+        <div class="d-block" :class="{'d-none':!showLoading}">
+            {% include 'index/loading.html' %}
+        </div>
         <template>
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
-            <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
-                <h2>{{object}}</h2>
+            <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
+                <h2 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / {{object}}</h2>
             </div>
 
 
@@ -29,7 +32,7 @@
             	<div class="row mt-2">
             		<div class="col-md-6 mb-2">
                         <div class="p-2 border mb-2">
-                            <h3>Details</h3>
+                            <h4 class="my-auto">Details</h3>
                         </div>
                         <form class="bg-light border border-left" method="POST" action="{% url 'bar:get_product' id=object.id %}" >
                             {% csrf_token %}
@@ -45,7 +48,7 @@
                     </div>
             		<div class="col-md-6">
                         <div class="p-2 border mb-2">
-                            <h3>Purchasing</h3>
+                            <h4 class="my-auto">Purchasing</h3>
                         </div>
 
                         <form class="bg-light border border-left" action="{% url 'bar:update_product_purchasing' id=object.id %}" method="POST">
@@ -58,7 +61,7 @@
                         </form>
 
                         <div class="p-2 border mb-2">
-                            <h3>Sale Guides</h3>
+                            <h4 class="my-auto">Sale Guides</h3>
                         </div>
                         <table class="table table-bordered">
                             <thead>
@@ -105,10 +108,12 @@
             metrics: [],
             metric: '',
             price: '',
+            showLoading: true,
         },
         created: function() {
         	this.getProduct()
             this.getProductMetrics()
+            this.showLoading=false
         },
         computed: {
             errors(){
@@ -146,13 +151,12 @@
                 if (Object.keys(this.errors).length) {
                     return
                 }
+                this.showLoading = true
                 data = {
                     metric_id: this.metric,
                     price: this.price,
                     product: this.product.id
                 }
-
-                console.log(data)
                 this.metric=""; this.price="";
                 fetch(`/api/sale-guides/`, {
                     method: "POST",
@@ -165,11 +169,12 @@
                 .then(response=>response.json())
                 .then(data=>{
                     this.product.sale_guides.push(data)
+                    this.showLoading = false
                 })
             },
 
             deleteSaleGuide(saleGuide){
-                console.log(saleGuide)
+                this.showLoading = true
                 if (confirm(`Delete the sale guide ${saleGuide.price}@${saleGuide.metric.unit}?`)) {
                     fetch(`/api/sale-guides/${saleGuide.id}/`, {
                         method: "DELETE",
@@ -184,6 +189,7 @@
                                 sg=>sg.id!=saleGuide.id
                                 )
                         }
+                        this.showLoading = false
                     })
                     
                 }

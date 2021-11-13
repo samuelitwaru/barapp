@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from ..models import User, Profile
-from ..forms import UpdateUserPermissionsForm, UpdateUserForm, CreateUserForm
+from ..forms import UpdateUserPermissionsForm, UpdateUserForm, CreateUserForm, UpdateUserPasswordForm
 
 
 # class UsersPageView(TemplateView):
@@ -30,6 +30,8 @@ def create_user(request):
 		if create_user_form.is_valid():
 			data = create_user_form.cleaned_data
 			user = User.objects.create(username=data["email"], email=data["email"])
+			user.set_password(data["password"])
+			user.save()
 			profile = Profile.objects.create(name=data["name"], email=data["email"], telephone=data["telephone"], user=user)
 			messages.success(request, "User created")
 			return redirect('bar:update_user', id=user.id)
@@ -75,6 +77,20 @@ def update_user_permissions(request, id):
 		messages.success(request, "Updated user permissions")
 	else:
 		print(update_user_permissions_form.errors)
+	return redirect('bar:get_profile', id=user.profile.id)
+
+
+@login_required
+def update_user_password(request, id):
+	user = User.objects.filter(id=id).first()
+	update_user_password_form = UpdateUserPasswordForm(request.POST)
+	if request.method == "POST" and update_user_password_form.is_valid():
+		data = update_user_password_form.cleaned_data
+		user.set_password(data["new_password"])
+		user.save()
+		messages.success(request, "Updated user password")
+	else:
+		print(update_user_password_form.errors)
 	return redirect('bar:get_profile', id=user.profile.id)
 
 
