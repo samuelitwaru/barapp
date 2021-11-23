@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load app_tags %}
+{% load humanize %}
 
 
 {% block body %}
@@ -11,11 +12,25 @@
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
             <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
-                <h2 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / {{object}}</h2>
+                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / {{object}}</h3>
             </div>
 
 
             <div class="container-fluid">
+                <div class="p-2 d-flex mb-2 border">
+                    <div class="flex-fill">
+                        <div class="px-1 my-auto">
+                            <label>Stock:</label>
+                            <strong>{{object.quantity|floatformat:2}} ({{object.purchase_metric}})</strong>
+                        </div>
+
+                        <div class="px-1 my-auto">
+                            <label>Stock Value:</label>
+                            <strong>{{object.quantity|multiply:object.purchase_price|floatformat:0|intcomma}}</strong>
+                        </div>
+                    </div>
+                    <a href="{% url 'bar:add_product_stock' id=object.id %}" class="btn btn-success btn-sm my-auto">+ Stock</a>
+                </div>
                 <form action="{% url 'bar:update_product_categories' id=object.id %}" method="POST" class="d-flex justify-content-between flex-nowrap py-1 overflow-auto">
                     {% csrf_token %}
                     <div class="border d-flex flex-nowrap py-1 overflow-auto">

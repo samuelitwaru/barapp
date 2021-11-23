@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import TemplateView, DetailView
 from ..models import Product, Category
-from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm
+from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm, AddProductStockForm
 
 
 class ProductsPageView(TemplateView):
@@ -44,18 +44,19 @@ def get_product(request, id):
 			"quantity": product.quantity,
 			"metric_system": product.metric_system.id
 		}, product=product)
-	if request.method=="POST" and update_product_form.is_valid():
-		data = update_product_form.cleaned_data
-		product.name = data["name"]
-		product.brand = data["brand"]
-		product.barcode = data["barcode"]
-		product.description = data["description"]
-		product.barcode = data["barcode"]
-		# product.quantity = data["quantity"]
-		product.metric_system = data["metric_system"]
-		product.save()
-		messages.success(request, "Product updated")
-		return redirect('bar:get_product', id=product.id)
+	if request.method=="POST":
+		update_product_form = UpdateProductForm(data=request.POST, product=product)
+		if update_product_form.is_valid():
+			data = update_product_form.cleaned_data
+			product.name = data["name"]
+			product.brand = data["brand"]
+			product.barcode = data["barcode"]
+			product.description = data["description"]
+			product.barcode = data["barcode"]
+			product.metric_system = data["metric_system"]
+			product.save()
+			messages.success(request, "Product updated")
+			return redirect('bar:get_product', id=product.id)
 
 	update_product_purchasing_form = UpdateProductPurchasingForm(data={
 		"purchase_metric": getattr(product.purchase_metric, "id", None),
@@ -76,6 +77,9 @@ def update_product_purchasing(request, id):
 	update_product_purchasing_form = UpdateProductPurchasingForm(data=request.POST, product=product)
 	if request.method=="POST" and update_product_purchasing_form.is_valid():
 		data = update_product_purchasing_form.cleaned_data
+		if data["purchase_metric"] != product.purchase_metric:
+			quantity = product.metric_system.convert(product.quantity, product.purchase_metric, data["purchase_metric"])
+			product.quantity = quantity
 		product.purchase_metric = data["purchase_metric"]
 		product.purchase_price = data["purchase_price"]
 		product.save()
@@ -106,3 +110,33 @@ def update_product_categories(request, id):
 		product.save()
 		messages.success(request, "Product categories updated")
 	return redirect('bar:get_product', id=product.id)
+
+
+def add_product_stock(request, id):
+	product = Product.objects.filter(id=id).first()
+	add_product_stock_form = AddProductStockForm(data={
+		"quantity": 1,
+		"purchase_metric": getattr(product.purchase_metric, "id", None),
+		"purchase_price": product.purchase_price,
+		}, product=product)
+	if request.method=="POST":
+		add_product_stock_form = AddProductStockForm(data=request.POST, product=product)
+		if add_product_stock_form.is_valid():
+			data = add_product_stock_form.cleaned_data
+			if data["purchase_metric"] != product.purchase_metric:
+				quantity = product.metric_system.convert(product.quantity, product.purchase_metric, data["purchase_metric"])
+				product.quantity = quantity
+			product.purchase_metric = data["purchase_metric"]
+			product.purchase_price = data["purchase_price"]
+			product.quantity += data["quantity"]
+			# print(">>>>>>>>>>>>", product.quantity)
+			product.save()
+			messages.success(request, "Product stock added")
+			return redirect('bar:get_product', id=product.id)
+
+	context = {
+		"product": product,
+		"add_product_stock_form": add_product_stock_form,
+
+	}
+	return render(request, 'product/add-product-stock.html', context)

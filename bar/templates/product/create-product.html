@@ -6,14 +6,14 @@
 	<div id="app">
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
-            <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
-                <h2>Create Product</h2>
+            <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
+                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / Create product</h3>
             </div>
 
             <div class="container-fluid" align="center">
         		<div align="left" style="max-width:400px;">
                     <div class="p-2 border mb-2">
-                        <strong>Details</strong>
+                        <strong>Create product</strong>
                     </div>
                     <form class="bg-light border border-left" method="POST">
                         {% csrf_token %}

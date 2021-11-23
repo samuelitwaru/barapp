@@ -8,7 +8,7 @@
         </div>
         <template>
             {% include 'index/nav.html' %}
-            {% include 'order/cart.html' %}
+            {% include 'order/update-cart.html' %}
             {% include 'product/products-offcanvas.html' %}
         </template>
     </div>
@@ -21,11 +21,13 @@
     var vue = new Vue({
         el: '#app',
         data: {
+            orderGroup: {},
         	products: [],
         	displayedProducts: [],
         	orders: {},
         	categories: [],
         	searchString: '',
+            orderStatusText: 'Fetching orders...',
             showLoading: true,
         },
         created: function() {
@@ -37,6 +39,14 @@
             
         },
         methods: {
+            getOrderGroup(){
+                fetch("/api/order-groups/{{order_group.id}}/")
+                .then(r => r.json())
+                .then(data => {
+                    this.orderGroup = data
+                    this.setOrders(data.orders)
+                })
+            },
             getProducts(){
             	fetch("/api/products")
             	.then(r => r.json())
@@ -45,7 +55,19 @@
                 })
                 .then(()=>{
                 	this.displayedProducts = this.products
+                    this.getOrderGroup()
                 })
+            },
+            setOrders(orders){
+                for (var i=0; i<orders.length; i++) {
+                    order = orders[i]
+                    product = this.products.filter(product=>product.id==order.product).shift()||null
+                    if (product){
+                        product.orderQuantity = order.quantity
+                        this.orders[product.id] = product
+                    }
+                }
+                this.orderStatusText = "No orders"
             },
 
             getCategories(){
@@ -128,10 +150,10 @@
         		this.displayedProducts = results
         	},
 
-        	createOrders(){
+        	updateOrders(){
                 this.showLoading = true
-        		fetch(`/api/orders/create_orders/`, {
-                    method: "POST",
+        		fetch(`/api/orders/{{order_group.id}}/update_orders/`, {
+                    method: "PUT",
                     headers: {
                         "Content-Type": 'application/json',
                         "X-CSRFToken":'{{csrf_token}}'
@@ -141,18 +163,11 @@
                 .then(response=>response.json())
                 .then(data=>{
                     if (data.status == "success"){
-                        alert(data.detail)
+                        alert("Orders updated")
                         this.showLoading = false
-                        this.clearCart()
                     }
                 })
         	},
-
-            clearCart(){
-                this.orders = {}
-                this.setProducts(this.products)
-            }
-            
         }
     });
 </script>

@@ -20,12 +20,12 @@
         	<thead>
         		<th>Name</th>
         		<th>Brand</th>
+        		<th>Stock</th>
         		<th>Description</th>
         		<th>Barcode</th>
-        		<th>Quantity</th>
         		<th>Metric System</th>
         		<th>Purchase Price</th>
-                <th>Purchase Metdic</th>
+                <th>Purchase Metric</th>
         		<th>Action</th>
         	</thead>
 
@@ -34,13 +34,18 @@
         		<tr>
                     <td><a href="{% url 'bar:get_product' id=product.id %}" class="nav-link p-0">{{product.name}}</a></td>
         			<td>{{product.brand}}</td>
+        			<td class="text-center">
+                        {{product.quantity|floatformat:2}}
+                        <a href="{% url 'bar:add_product_stock' id=product.id %}" class="btn btn-success btn-sm">+ Stock</a>
+                    </td>
         			<td>{{product.description}}</td>
         			<td>{{product.barcode}}</td>
-        			<td>{{product.quantity}}</td>
         			<td>{{product.metric_system}}</td>
         			<td>{{product.purchase_price}}</td>
                     <td>{{product.purchase_metric}}</td>
-        			<td><a href="{% url 'bar:get_product' id=product.id %}" class="btn btn-primary btn-sm">View</a></td>
+        			<td>
+                        <a href="{% url 'bar:get_product' id=product.id %}" class="btn btn-primary btn-sm">View</a>
+                    </td>
         		</tr>
         		{% endfor %}
         	</tbody>

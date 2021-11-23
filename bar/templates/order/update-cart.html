@@ -1,11 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top border-bottom">
     <div class="container-fluid p-0">
         <div class="p-1">
-            <h3 class="m-0">New Order</h3>
-        </div>
-
-        <div class="border p-2">
-        	<strong>UGX {%verbatim%}{{totalPrice()}}{%endverbatim%}</strong>
+            <h3 class="m-0">{{order_group.reference}}</h3>
         </div>
     
         <div>
@@ -48,11 +44,7 @@
 	</table>
 	<div class="py-5" v-if="!Object.values(orders).length">
 		<p class="text-center text-muted">
-			Tap 
-			<button class="btn nav-link d-inline" type="button" data-bs-toggle="offcanvas" data-bs-target="#productsOffCanvas" aria-controls="offcanvasRight">
-				Here
-			</button>
-			to place new orders
+			{%verbatim%}{{orderStatusText}}{%endverbatim%}
 		</p>
 	</div>
 </div>
@@ -65,15 +57,36 @@
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Send Orders</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Update Orders</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				Send Orders?
+				Update Orders?
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-				<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="createOrders">Send</button>
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateOrders">Update</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deleteOrderGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Delete Order {{order.reference}}</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Delete Orders?
+			</div>
+			<div class="modal-footer">
+				<form action="{% url 'bar:delete_order_group' id=order_group.id %}">
+					{% csrf_token %}
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Delete</button>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -81,7 +94,11 @@
 
 
 <div class="row fixed-bottom m-3 justify-content-between" style="height:40" align="center">
-	<div class="col my-auto"><button v-if="Object.values(orders).length" class="btn btn-danger" @click="clearCart()">Clear</button></div>
-	<div class="col"><button v-if="Object.values(orders).length" class="btn btn-lg btn-primary shadow text-light rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#submitOrderModal"><span class="fa fa-check fa-2x"></span></button></div>
-	<div class="col my-auto border p-2 bg-light">{%verbatim%}{{totalPrice()}}{%endverbatim%}</div>
+	<div class="col my-auto">
+		<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteOrderGroupModal"><span class="fa fa-trash"></span> Delete</button>
+	</div>
+	<div class="col my-auto">
+		<button v-if="Object.values(orders).length" class="btn btn-lg btn-primary shadow text-light rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#submitOrderModal"><span class="fa fa-check fa-2x"></span></button>
+	</div>
+	<div class="col my-auto border p-2 bg-light">UGX {%verbatim%}{{totalPrice()}}{%endverbatim%}</div>
 </div>

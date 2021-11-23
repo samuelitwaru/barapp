@@ -3,13 +3,21 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from ..models import Order
+from ..models import Order, OrderGroup
 from ..utils import STATUS_CHOICES
 
 
 @login_required
 def create_orders(request):
     return render(request, 'pages/create-orders.html')
+
+@login_required
+def update_orders(request, order_group_id):
+    order_group = OrderGroup.objects.get(id=order_group_id)
+    context = {
+        "order_group": order_group
+    }
+    return render(request, 'pages/update-orders.html', context)
 
 
 @login_required

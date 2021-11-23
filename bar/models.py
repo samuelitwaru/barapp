@@ -19,6 +19,12 @@ class MetricSystem(TimeStampedModel):
 	def __str__(self):
 		return self.name
 
+	def base_metric(self):
+		return self.metric_set.filter(multiplier=1.0).first()
+
+	def convert(self, quantity, from_metric, to_metric):
+		return quantity*(to_metric.multiplier/from_metric.multiplier)
+
 
 class Metric(TimeStampedModel):
 	unit = models.CharField(max_length=128)
@@ -73,6 +79,16 @@ class SaleGuide(TimeStampedModel):
 		return f"{self.price} @ {self.metric}"
 
 
+class OrderGroup(TimeStampedModel):
+	reference = models.CharField(max_length=128)
+	closed = models.BooleanField(default=False)
+	waiter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='waiter')
+	cashier = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='cashier')
+
+	def __str__(self):
+		return self.reference
+
+
 class Order(TimeStampedModel):
 	reference = models.CharField(max_length=128)
 	quantity = models.IntegerField()
@@ -83,10 +99,11 @@ class Order(TimeStampedModel):
 	sale_metric = models.CharField(max_length=128)
 	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=PENDING)
 
+	order_group = models.ForeignKey(OrderGroup, on_delete=models.CASCADE)
 	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 	sale_guide = models.ForeignKey(SaleGuide, null=True, on_delete=models.SET_NULL)
-	waiter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='waiter')
-	cashier = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='cashier')
+	# waiter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='waiter')
+	# cashier = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='cashier')
 
 	class Meta:
 		permissions = [
@@ -97,6 +114,8 @@ class Order(TimeStampedModel):
 
 	def __str__(self):
 		return self.reference
+
+
 
 
 class Profile(models.Model):

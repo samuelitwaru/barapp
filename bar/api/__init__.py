@@ -1,5 +1,6 @@
 from .metric import *
 from .metric_system import *
+from .order_group import *
 from .order import *
 from .product import *
 from .profile import *

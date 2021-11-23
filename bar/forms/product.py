@@ -27,6 +27,7 @@ class UpdateProductForm(CreateProductForm):
 			self.add_error('barcode', "Product with this barcode already exists")
 
 
+
 class UpdateProductCategoriesForm(forms.Form):
 
 	def __init__(self, categories=None, product=None, *args, **kwargs):
@@ -55,3 +56,26 @@ class UpdateProductPurchasingForm(ModelForm):
 	def __init__(self, product, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.fields["purchase_metric"].widget.choices = [(metric.id, str(metric)) for metric in product.metric_system.metric_set.all()]
+
+
+class AddProductStockForm(UpdateProductPurchasingForm):
+	quantity = forms.IntegerField(label="Quantity")
+
+	def __init__(self, product, *args, **kwargs):
+		super().__init__(product=product, *args, **kwargs)
+		self.product = product
+
+	def clean(self):
+		cleaned_data = super().clean()
+		quantity = cleaned_data["quantity"]
+		purchase_metric = cleaned_data["purchase_metric"]
+		if quantity < 1:
+			self.add_error('quantity', "Value cannot be less than 1")
+		# product_quantity = self.product.quantity
+		# if purchase_metric != self.product.purchase_metric:
+		# 	# convert current product quantity to new purchase metric
+		# 	quantity = self.product.metric_system.convert(product_quantity, self.product.purchase_metric, purchase_metric)
+		# 	print(">>>>>>>>>>>>", quantity)
+		# self.cleaned_data["quantity"] = product_quantity + quantity
+
+

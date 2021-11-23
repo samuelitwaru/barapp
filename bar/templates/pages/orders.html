@@ -6,85 +6,11 @@
         <div class="d-block" :class="{'d-none':!showLoading}">
             {% include 'index/loading.html' %}
         </div>
-        <template>
-            {% include 'index/nav.html' %}
+        {% include 'index/nav.html' %}        
 
-            <ul class="border sticky-top bg-light justify-content-between nav nav-pills p-2" id="pills-tab" role="tablist" align="center">
-                <h3 class="my-auto">Orders</h3>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {% if status == 0 %}active{% endif %}" id="pills-pending-tab" data-bs-toggle="pill" data-bs-target="#pills-pending" type="button" role="tab" aria-controls="pills-pending" aria-selected="true">PENDING</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {% if status == 1 %}active{% endif %}" id="pills-ready-tab" data-bs-toggle="pill" data-bs-target="#pills-ready" type="button" role="tab" aria-controls="pills-ready" aria-selected="false">READY</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {% if status == 2 %}active{% endif %}" id="pills-served-tab" data-bs-toggle="pill" data-bs-target="#pills-served" type="button" role="tab" aria-controls="pills-served" aria-selected="false">SERVED</button>
-                </li>
-            </ul>
-            
-            {% include 'index/alert.html' %}
+        {% include 'order/orders.html' %}
 
-            <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade {% if status == 0 %}show active{% endif %}" id="pills-pending" role="tabpanel" aria-labelledby="pills-pending-tab">
-                    <div class="list-group rounded-0" v-for="ref in Object.keys(pending)">
-                        <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#orderModal" @click="showOrderRef(ref, 0)">
-                            {%verbatim%}{{ref}}{%endverbatim%}
-                            <span class="float-right">
-                                {%verbatim%}
-                                    {{timeSince( new Date(pending[ref][0].created_at) )}}
-                                {%endverbatim%}
-                            </span>
-                        </button>
-                    </div>
-                    <div class="py-5" v-if="!Object.values(pending).length">
-                        <p class="text-center text-muted display-3">No pending orders</p>
-                        <p class="text-center text-muted">
-                            <a href="{% url 'bar:create_orders' %}" class="btn nav-link d-inline">
-                                Start New Order
-                            </a>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade {% if status == 1 %}show active{% endif %}" id="pills-ready" role="tabpanel" aria-labelledby="pills-ready-tab">
-                    <div class="list-group rounded-0" v-for="ref in Object.keys(ready)">
-                        <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#orderModal" @click="showOrderRef(ref, 1)">
-                            {%verbatim%}{{ref}}{%endverbatim%}
-                            <span class="float-right">
-                                {%verbatim%}
-                                    {{timeSince(new Date(ready[ref][0].created_at))}}
-                                {%endverbatim%}
-                            </span>
-                        </button>
-                    </div>
-                    <div class="py-5" v-if="!Object.values(ready).length">
-                        <p class="text-center text-muted display-3">No ready orders</p>
-                        <p class="text-center text-muted">
-                            <a href="{% url 'bar:create_orders' %}" class="btn nav-link d-inline">
-                                Start New Order
-                            </a>
-                        </p>
-                    </div>
-                </div>
-
-                
-                <div class="tab-pane fade {% if status == 2 %}show active{% endif %}" id="pills-served" role="tabpanel" aria-labelledby="pills-served-tab">
-                    <div class="list-group rounded-0" v-for="ref in Object.keys(served)">
-                        <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#orderModal" @click="showOrderRef(ref, 2)">
-                            {%verbatim%}{{ref}}{%endverbatim%}
-                            <span class="float-right">
-                                {%verbatim%}
-                                    {{timeSince( new Date(served[ref][0].created_at) )}}
-                                {%endverbatim%}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                <div class="d-none">{%verbatim%}{{this.timeNow}}{%endverbatim%}</div>
-            </div>
-
-            {% include 'order/order-modal.html' %}
-        </template>
+        {% include 'order/order.html' %}
     </div>
 
 {% endblock %}
@@ -92,15 +18,16 @@
 
 {% block vue %}
 <script type="text/javascript">
+
     var vue = new Vue({
         el: '#app',
-        data: {
-            pending: [],
-            ready: [],
-            served: [],
-        	0: {},
-            1: {},
-            2: {},
+        data(){ 
+            return{
+            0: [],
+            1: [],
+            2: [],
+            orderGroup: {},
+            orderGroups: [],
             showLoading: true,
             currentOrders: [],
             currentStatus: null,
@@ -110,14 +37,29 @@
                 1:'READY',
                 2:'SERVED'
             },
-            timeNow: new Date()
+            timeNow: new Date(),
+            showFooter: true,
+            }
         },
         created: function() {
-        	this.getOrders()
+            // this.getOrders()
+            this.getOrderGroups()
             this.showLoading=false
             setInterval(this.updateTimeNow, 30000)
         },
         computed: {
+            pending(){
+                this[0] = this.orderGroups.filter(orderGroup=>orderGroup.orders[0].status==0)
+                return this[0]
+            },
+            ready(){
+                this[1] = this.orderGroups.filter(orderGroup=>orderGroup.orders[0].status==1)
+                return this[1]
+            },
+            served(){
+                this[2] = this.orderGroups.filter(orderGroup=>orderGroup.orders[0].status==2)
+                return this[2]
+            },
         },
         methods: {
             updateOrderTimes(){
@@ -126,9 +68,17 @@
             updateTimeNow(){
                 this.timeNow = new Date()
             },
+            getOrderGroups(){
+                fetch("/api/order-groups/")
+                .then(r => r.json())
+                .then(data => {
+                    this.orderGroups = data.results
+
+                })
+            },
             getOrders(){
-            	fetch("/api/orders/")
-            	.then(r => r.json())
+                fetch("/api/orders/")
+                .then(r => r.json())
                 .then(data => {
                     for (var i = 0; i < data.results.length; i++) {
                         order = data.results[i]
@@ -143,10 +93,11 @@
                 })
             },
 
-            showOrderRef(ref, status){
-                this.currentOrders = this[status][ref]
-                this.currentStatus = status
-                this.currentRef = ref
+            showOrderGroup(orderGroup){
+                this.orderGroup = orderGroup
+                this.currentOrders = orderGroup.orders
+                this.currentStatus = orderGroup.orders[0].status
+                this.currentRef = orderGroup.reference
             },
 
             totalPrice(){
@@ -156,6 +107,32 @@
                     total += order.quantity*order.sale_price
                 }
                 return total
+            },
+
+            updateOrderGroupClosedState(orderGroup){
+                this.showLoading = true
+                index = this.orderGroups.indexOf(orderGroup)
+                fetch(`/api/order-groups/${orderGroup.id}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "X-CSRFToken":'{{csrf_token}}'
+                    },
+                    body: JSON.stringify({
+                        closed: !orderGroup.closed,
+                    })
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    this.orderGroups = this.orderGroups.map((orderGroup,i)=>{
+                        if (i==index){
+                            orderGroup = data
+                        }
+                        return orderGroup
+                    })
+                    this.orderGroup = data
+                    this.showLoading = false
+                })
             },
 
             updateOrderStatus(ref, status){
@@ -194,8 +171,14 @@
                 interval = seconds / 60; 
                 if (interval > 1) { return Math.floor(interval) + " minutes ago"; } 
                 return Math.floor(seconds) + " seconds ago"; 
-            } 
+            },
+
+            printOrder(){
+                // this.showFooter = false
+                // setTimeout(()=>{print('sdsdsd')}, 100)
+                // this.showFooter = true
+            }, 
         }
-    });
+    })
 </script>
 {% endblock %}

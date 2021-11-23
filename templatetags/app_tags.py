@@ -12,6 +12,11 @@ def comma_separator(value):
 	return value
 
 
+@register.filter(name="multiply")
+def multiply(value, arg):
+	return value * arg
+
+
 @register.filter(name="currency")
 def currency(value):
 	if isinstance(value, int):

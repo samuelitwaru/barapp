@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+    	{%verbatim%}{{name}}{%endverbatim%}
+    	
+    	<p><router-link to="/">Go to page 1</router-link></p>
+		<p><router-link to="/page2">Go to page 2</router-link></p>
+		<p>
+    		<router-view>
+    		</router-view>
+    	</p>
+    </div>
+
+    <script type="text/x-template" id="page1" verson='1.0'>
+    	<div>
+    		<div>
+    			Page 1
+				<!-- {%verbatim%}{{version}}{%endverbatim%} -->
+    		</div>
+    	</div>
+    </script>
+
+    <script type="text/x-template" id="page2">
+    	<div>
+    		<div>
+    			Page 2
+				{%verbatim%}{{name}}{%endverbatim%}
+    		</div>
+    	</div>
+    </script>
+{% endblock %}
+
+{% block vue %}
+<script type="text/javascript">
+	var PageOneComponent = Vue.component('page1', {
+		template: "#page1",
+		data() {
+			return {
+				name: "dan",
+			}
+		},
+	})
+	var PageTwoComponent = Vue.component('page2', {template:"#page2"})
+
+
+	const routes = [
+		{path:'/', component: PageOneComponent},
+		{path:'/page2', component: PageTwoComponent},
+	]
+
+	const router = new VueRouter({
+		routes
+	})
+
+	var app = new Vue({
+		router,
+		data: {
+			name: "sam",
+			version: 1.0,
+		}
+	}).$mount('#app')
+</script>
+{% endblock %}

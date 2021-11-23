@@ -23,8 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'o5xjeub1(hh=r)c1u*7iwppz7dnz24^7u_qgy)p7g71nfd!i7g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'rest_framework',
     'bar',
 ]
@@ -82,7 +83,7 @@ WSGI_APPLICATION = 'bar_project.wsgi.application'
 
 DATABASES = {
     'default': {'ENGINE': 'django.db.backends.mysql','NAME': os.environ["BAR_DATABASE_NAME"],'USER': os.environ["BAR_DATABASE_USER"],'PASSWORD': os.environ["BAR_DATABASE_PASSWORD"]},
-    'default': {'ENGINE': 'django.db.backends.sqlite3','NAME': os.path.join(BASE_DIR, 'db.sqlite3'),},
+    # 'default': {'ENGINE': 'django.db.backends.sqlite3','NAME': os.path.join(BASE_DIR, 'db.sqlite3'),},
 }
 
 

@@ -1,0 +1,91 @@
+
+<div>
+    <ul class="border sticky-top bg-light justify-content-between nav nav-pills p-2" id="pills-tab" role="tablist" align="center">
+        <h3 class="my-auto">Orders</h3>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if status == 0 %}active{% endif %}" id="pills-pending-tab" data-bs-toggle="pill" data-bs-target="#pills-pending" type="button" role="tab" aria-controls="pills-pending" aria-selected="true">PENDING</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if status == 1 %}active{% endif %}" id="pills-ready-tab" data-bs-toggle="pill" data-bs-target="#pills-ready" type="button" role="tab" aria-controls="pills-ready" aria-selected="false">READY</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if status == 2 %}active{% endif %}" id="pills-served-tab" data-bs-toggle="pill" data-bs-target="#pills-served" type="button" role="tab" aria-controls="pills-served" aria-selected="false">SERVED</button>
+        </li>
+    </ul>
+    
+    {% include 'index/alert.html' %}
+
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade {% if status == 0 %}show active{% endif %}" id="pills-pending" role="tabpanel" aria-labelledby="pills-pending-tab">
+            <div class="list-group rounded-0" v-for="orderGroup in pending">
+                <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#orderModal" @click="showOrderGroup(orderGroup)">
+                    <label class="my-auto">{%verbatim%}{{orderGroup.reference}}{%endverbatim%}</label>
+                    <div align="right">
+                        <small class="text-primary">pending</small>
+                        <br>
+                        <small class="text-muted">
+                            {%verbatim%}
+                                {{timeSince( new Date(orderGroup.created_at) )}}
+                            {%endverbatim%}
+                        </small>
+                    </div>
+                </button>
+            </div>
+            <div class="py-5" v-if="!this[0].length">
+                <p class="text-center text-muted display-3">No pending orders</p>
+                <p class="text-center text-muted">
+                    <a href="{% url 'bar:create_orders' %}" class="btn nav-link d-inline">
+                        Start New Order
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="tab-pane fade {% if status == 1 %}show active{% endif %}" id="pills-ready" role="tabpanel" aria-labelledby="pills-ready-tab">
+            <div class="list-group rounded-0" v-for="orderGroup in ready">
+                <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#orderModal" @click="showOrderGroup(orderGroup)">
+                    <label class="my-auto">{%verbatim%}{{orderGroup.reference}}{%endverbatim%}</label>
+                    <div align="right">
+                        <small class="text-info">ready</small>
+                        <br>
+                        <small class="text-muted">
+                            {%verbatim%}
+                                {{timeSince( new Date(orderGroup.created_at) )}}
+                            {%endverbatim%}
+                        </small>
+                    </div>
+                </button>
+            </div>
+            <div class="py-5" v-if="!this[1].length">
+                <p class="text-center text-muted display-3">No ready orders</p>
+                <p class="text-center text-muted">
+                    <a href="{% url 'bar:create_orders' %}" class="btn nav-link d-inline">
+                        Start New Order
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        
+        <div class="tab-pane fade {% if status == 2 %}show active{% endif %}" id="pills-served" role="tabpanel" aria-labelledby="pills-served-tab">
+            <div class="list-group rounded-0" v-for="orderGroup in served">
+                <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#orderModal" @click="showOrderGroup(orderGroup)">
+                    <label class="my-auto">{%verbatim%}{{orderGroup.reference}}{%endverbatim%}</label>
+                    <div align="right">
+                        <small v-if="!orderGroup.closed" class="text-success">open</small>
+                        <small v-if="orderGroup.closed" class="text-danger">closed</small>
+                        <br>
+                        <small class="text-muted">
+                            {%verbatim%}
+                                {{timeSince( new Date(orderGroup.created_at) )}}
+                            {%endverbatim%}
+                        </small>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="d-none">
+            {%verbatim%}{{this.timeNow}}{%endverbatim%}
+        </div>
+    </div>
+</div>

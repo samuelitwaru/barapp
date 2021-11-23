@@ -2,8 +2,12 @@
 <div class="modal" id="orderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-fullscreen">
 		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">{%verbatim%}{{currentRef}}{%endverbatim%}</h5>
+			<div class="modal-header px-2">
+				<h5 class="modal-title" id="exampleModalLabel">
+					{%verbatim%}{{currentRef}}{%endverbatim%}
+					<span v-if="!orderGroup.closed" class="badge bg-success">open</span>
+					<span v-if="orderGroup.closed" class="badge bg-danger">closed</span>
+				</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 
@@ -36,14 +40,21 @@
 							{%verbatim%}{{STATUSES[product.status]}}{%endverbatim%}
 						</td>
 					</tr>
+					<tr>
+						<td colspan="3">
+							Total
+						</td>
+						<td colspan="2">
+							UGX {%verbatim%}{{totalPrice()}}{%endverbatim%}
+						</td>
+					</tr>
 				</table>
-
-
 			</div>
 
-			<div class="modal-footer justify-content-between">
-				<strong class="">UGX {%verbatim%}{{totalPrice()}}{%endverbatim%}</strong>
-				<form v-if="currentStatus==0" align="right" method="POST" action="{% url 'bar:update_order_status' %}">
+			<div class="modal-footer justify-content-between" v-if="showFooter">
+				<button class="btn btn-info" @click="printOrder()"><span class="fa fa-print"></span> Print</button>
+				<a v-if="!orderGroup.closed" class="btn btn-info" :href="'/orders/update/'+orderGroup.id"><span class="fa fa-pencil"></span> Edit</a>
+				<form v-if="currentStatus==0" align="right" method="POST" action="{% url 'bar:update_order_status' %}" class="p-2 border">
         			<div class="form-check">
 	        			<input class="form-check-input" type="checkbox" name="check" value="1" id="check" required>
 						<label class="form-check-label" for="check">
@@ -54,11 +65,10 @@
 					{% csrf_token %}
 					<input type="hidden" name="ref" :value="currentRef" hidden/>
 					<input type="number" name="status" value="1" hidden/>
-
 					<button type="submit" class="btn btn-primary">Submit</button>
 				</form>
 
-				<form v-if="currentStatus==1" align="right" method="POST" action="{% url 'bar:update_order_status' %}">
+				<form v-if="currentStatus==1" align="right" method="POST" action="{% url 'bar:update_order_status' %}" class="p-2 border">
         			<div class="form-check">
 	        			<input class="form-check-input" type="checkbox" name="check" value="2" id="check" required>
 						<label class="form-check-label" for="check">
@@ -72,7 +82,8 @@
 					<button type="submit" class="btn btn-primary">Submit</button>
 				</form>
 
-				<button v-if="currentStatus==2" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button v-if="currentStatus==2 && !orderGroup.closed" class="btn btn-primary" @click="updateOrderGroupClosedState(orderGroup)" data-bs-dismiss="modal"><span class="fa fa-lock"></span> Close</button>
+				<button v-if="currentStatus==2 && orderGroup.closed" class="btn btn-success" @click="updateOrderGroupClosedState(orderGroup)" data-bs-dismiss="modal"><span class="fa fa-unlock"></span> Open</button>
 			</div>
 		</div>
 	</div>

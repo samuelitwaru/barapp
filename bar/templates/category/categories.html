@@ -1,10 +1,10 @@
 <div class="d-flex justify-content-between flex-nowrap py-1 overflow-auto hide-scroll">
-	<div class="d-flex flex-nowrap py-1 overflow-auto hide-scroll">
+	<div class="d-flex flex-nowrap py-1 overflow-auto hide-scroll border border-left-0">
 		{% for category in categories %}
 	 	<a href="{% url 'bar:get_category' id=category.id %}" class="p-2 mx-1 btn btn-outline-primary text-nowrap">
 	 		{{category}}
 	 	</a>
 	 	{% endfor %}
 	</div>
- 	<a href="{% url 'bar:create_category' %}" class="nav-link" >+ Add Category</a>
+ 	<a href="{% url 'bar:create_category' %}" class="nav-link my-auto" >+ Add Category</a>
 </div>
