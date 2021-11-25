@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from django.db import transaction
-from ..models import Order, OrderGroup
+from ..models import Order, OrderGroup, SaleGuide, Product
 from rest_framework import routers, serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -29,18 +29,23 @@ class OrderViewSet(viewsets.ModelViewSet):
 		order_group = OrderGroup(reference=ref, waiter_id=request.user.id)
 		order_group.save()
 		for product in orders:
+			sale_guide = SaleGuide.objects.get(id=product.get("orderSaleGuide").get("id"))
+			sale_guide_metric = sale_guide.metric
+			order_quantity = product.get("orderQuantity")
 			order = Order(
 				reference=ref,
-				quantity=product.get("orderQuantity"),
+				quantity=order_quantity,
 				product_name=product.get("name"),
 				purchase_price=product.get("purchase_price"),
 				purchase_metric=product.get("purchase_metric").get("unit"),
-				sale_price=product.get("orderSaleGuide").get("price"),
-				sale_metric=product.get("orderSaleGuide").get("metric").get("unit"),
+				sale_price=sale_guide.price,
+				sale_metric=sale_guide_metric.unit,
 				order_group = order_group,
 				product_id=product.get("id"),
-				sale_guide_id=product.get("orderSaleGuide").get("id"),
+				sale_guide_id=sale_guide.id,
 			)
+			product = Product.objects.get(id=product.get("id"))
+			product.update_quantity_by(0-order_quantity, sale_guide_metric)
 			order.save()
 
 		success_response = {
@@ -57,26 +62,51 @@ class OrderViewSet(viewsets.ModelViewSet):
 		order_group = OrderGroup.objects.get(id=pk)
 		new_order_ids = []
 		for product in orders:
+			sale_guide = SaleGuide.objects.get(id=product.get("orderSaleGuide").get("id"))
+			sale_guide_metric = sale_guide.metric
+			order_quantity = product.get("orderQuantity")
+			
 			order = order_group.order_set.filter(product_id=product["id"]).first()
+			product_obj = Product.objects.get(id=product.get("id"))
+
 			if order:
-				order.quantity = product["orderQuantity"]
+				current_quantity = order.quantity
+				current_sale_guide = order.sale_guide
+
+				if order_quantity!=current_quantity or sale_guide!=current_sale_guide:
+					# revert product quantity
+					product_obj.update_quantity_by(current_quantity, current_sale_guide.metric)
+					# update order
+					order.quantity = order_quantity
+					order.sale_guide = sale_guide
+					order.save()
+					product_obj.update_quantity_by(0-order_quantity, sale_guide.metric)
 			else:
 				order = Order(
 					reference=order_group.reference,
-					quantity=product.get("orderQuantity"),
+					quantity=order_quantity,
 					product_name=product.get("name"),
 					purchase_price=product.get("purchase_price"),
 					purchase_metric=product.get("purchase_metric").get("unit"),
-					sale_price=product.get("orderSaleGuide").get("price"),
-					sale_metric=product.get("orderSaleGuide").get("metric").get("unit"),
+					sale_price=sale_guide.price,
+					sale_metric=sale_guide_metric.unit,
 					order_group = order_group,
 					product_id=product.get("id"),
-					sale_guide_id=product.get("orderSaleGuide").get("id"),
+					sale_guide_id=sale_guide.id,
 				)
-			order.save()
+				order.save()
+				product_obj.update_quantity_by(0-order_quantity, sale_guide_metric)
 			new_order_ids.append(order.id)
-		order_group.order_set.exclude(id__in=new_order_ids).delete()
-		# order_group.save()
+		
+		# delete all orders that have been removed
+		orders_to_remove = order_group.order_set.exclude(id__in=new_order_ids)
+		for order in orders_to_remove.all():
+			product = order.product
+			sale_guide = SaleGuide.objects.get(product_id=product.id)
+			sale_guide_metric = sale_guide.metric
+			if product:
+				product.update_quantity_by(order.quantity, sale_guide_metric)
+			order.delete()
 
 		success_response = {
 			"status": "success",

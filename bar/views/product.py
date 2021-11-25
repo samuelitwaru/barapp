@@ -64,6 +64,7 @@ def get_product(request, id):
 	}, product=product)
 	context = {
 		"object": product,
+		"default_sale_guide": product.sale_guides.first(),
 		"update_product_form": update_product_form,
 		"update_product_categories_form": update_product_categories_form,
 		"update_product_purchasing_form": update_product_purchasing_form,
@@ -123,14 +124,15 @@ def add_product_stock(request, id):
 		add_product_stock_form = AddProductStockForm(data=request.POST, product=product)
 		if add_product_stock_form.is_valid():
 			data = add_product_stock_form.cleaned_data
+			product.purchase_metric = data["purchase_metric"]
+			product.purchase_price = data["purchase_price"]
+			product.save()
 			if data["purchase_metric"] != product.purchase_metric:
 				quantity = product.metric_system.convert(product.quantity, product.purchase_metric, data["purchase_metric"])
 				product.quantity = quantity
-			product.purchase_metric = data["purchase_metric"]
-			product.purchase_price = data["purchase_price"]
 			product.quantity += data["quantity"]
-			# print(">>>>>>>>>>>>", product.quantity)
 			product.save()
+			# print(">>>>>>>>>>>>", product.quantity)
 			messages.success(request, "Product stock added")
 			return redirect('bar:get_product', id=product.id)
 

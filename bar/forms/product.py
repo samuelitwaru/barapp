@@ -68,14 +68,7 @@ class AddProductStockForm(UpdateProductPurchasingForm):
 	def clean(self):
 		cleaned_data = super().clean()
 		quantity = cleaned_data["quantity"]
-		purchase_metric = cleaned_data["purchase_metric"]
+		purchase_metric = cleaned_data.get("purchase_metric")
 		if quantity < 1:
 			self.add_error('quantity', "Value cannot be less than 1")
-		# product_quantity = self.product.quantity
-		# if purchase_metric != self.product.purchase_metric:
-		# 	# convert current product quantity to new purchase metric
-		# 	quantity = self.product.metric_system.convert(product_quantity, self.product.purchase_metric, purchase_metric)
-		# 	print(">>>>>>>>>>>>", quantity)
-		# self.cleaned_data["quantity"] = product_quantity + quantity
-
 

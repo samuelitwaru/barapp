@@ -19,15 +19,21 @@
             <div class="container-fluid">
                 <div class="p-2 d-flex mb-2 border">
                     <div class="flex-fill">
-                        <div class="px-1 my-auto">
-                            <label>Stock:</label>
-                            <strong>{{object.quantity|floatformat:2}} ({{object.purchase_metric}})</strong>
-                        </div>
+                        {% if default_sale_guide %}
+                            <div class="px-1 my-auto">
+                                <label>Stock Available:</label>
+                                <strong>{{object.quantity|floatformat:2}} ({{object.purchase_metric}})</strong>
+                            </div>
 
-                        <div class="px-1 my-auto">
-                            <label>Stock Value:</label>
-                            <strong>{{object.quantity|multiply:object.purchase_price|floatformat:0|intcomma}}</strong>
-                        </div>
+                            <div class="px-1 my-auto">
+                                <label>Stock Value:</label>
+                                <strong>
+                                    {{object.quantity|multiply:default_sale_guide.price|floatformat:0|intcomma}}
+                                </strong>
+                            </div>
+                        {% else %}
+                            <small class="text-danger">Add sale guides to view Stock Value!</small>
+                        {% endif %}
                     </div>
                     <a href="{% url 'bar:add_product_stock' id=object.id %}" class="btn btn-success btn-sm my-auto">+ Stock</a>
                 </div>

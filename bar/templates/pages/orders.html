@@ -6,11 +6,13 @@
         <div class="d-block" :class="{'d-none':!showLoading}">
             {% include 'index/loading.html' %}
         </div>
-        {% include 'index/nav.html' %}        
+        <template>
+            {% include 'index/nav.html' %}        
 
-        {% include 'order/orders.html' %}
+            {% include 'order/orders.html' %}
 
-        {% include 'order/order.html' %}
+            {% include 'order/order.html' %}
+        </template>
     </div>
 
 {% endblock %}

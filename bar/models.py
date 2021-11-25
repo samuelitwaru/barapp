@@ -47,9 +47,14 @@ class Product(TimeStampedModel):
 	purchase_metric = models.ForeignKey(Metric, null=True, on_delete=models.SET_NULL)
 	categories = models.ManyToManyField('Category', through='ProductCategories', through_fields=('product', 'category'))
 
-
 	def __str__(self):
 		return self.name
+
+	def update_quantity_by(self, quantity, metric):
+		if self.purchase_metric!=metric:
+			quantity = self.metric_system.convert(quantity, metric, self.purchase_metric)
+		self.quantity += quantity
+		self.save()
 
 
 class Category(TimeStampedModel):
