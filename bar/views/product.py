@@ -78,12 +78,18 @@ def update_product_purchasing(request, id):
 	update_product_purchasing_form = UpdateProductPurchasingForm(data=request.POST, product=product)
 	if request.method=="POST" and update_product_purchasing_form.is_valid():
 		data = update_product_purchasing_form.cleaned_data
-		if data["purchase_metric"] != product.purchase_metric:
-			quantity = product.metric_system.convert(product.quantity, product.purchase_metric, data["purchase_metric"])
+		old_purchase_metric = product.purchase_metric
+		new_purchase_metric = data["purchase_metric"]
+		new_purchase_price = data["purchase_price"]
+
+		if old_purchase_metric and old_purchase_metric != new_purchase_metric:
+			quantity = product.metric_system.convert(product.quantity, old_purchase_metric, new_purchase_metric)
 			product.quantity = quantity
-		product.purchase_metric = data["purchase_metric"]
-		product.purchase_price = data["purchase_price"]
+		
+		product.purchase_metric = new_purchase_metric
+		product.purchase_price = new_purchase_price
 		product.save()
+		
 		messages.success(request, "Product purchasing updated")
 		return redirect('bar:get_product', id=product.id)
 
@@ -124,21 +130,22 @@ def add_product_stock(request, id):
 		add_product_stock_form = AddProductStockForm(data=request.POST, product=product)
 		if add_product_stock_form.is_valid():
 			data = add_product_stock_form.cleaned_data
-			product.purchase_metric = data["purchase_metric"]
-			product.purchase_price = data["purchase_price"]
+			old_purchase_metric = product.purchase_metric
+			new_purchase_metric = data["purchase_metric"]
+			new_purchase_price = data["purchase_price"]
+			quantity = data["quantity"]
+			if old_purchase_metric and old_purchase_metric != new_purchase_metric:
+				new_quantity = product.metric_system.convert(product.quantity, old_purchase_metric, new_purchase_metric)
+				product.quantity = new_quantity
+			product.purchase_metric = new_purchase_metric
+			product.purchase_price = new_purchase_price
+			product.quantity += quantity
 			product.save()
-			if data["purchase_metric"] != product.purchase_metric:
-				quantity = product.metric_system.convert(product.quantity, product.purchase_metric, data["purchase_metric"])
-				product.quantity = quantity
-			product.quantity += data["quantity"]
-			product.save()
-			# print(">>>>>>>>>>>>", product.quantity)
 			messages.success(request, "Product stock added")
 			return redirect('bar:get_product', id=product.id)
 
 	context = {
 		"product": product,
 		"add_product_stock_form": add_product_stock_form,
-
 	}
 	return render(request, 'product/add-product-stock.html', context)

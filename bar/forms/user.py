@@ -10,6 +10,7 @@ class CreateUserForm(forms.Form):
 	email = forms.EmailField(widget=forms.TextInput(attrs={"class":"form-control"}))
 	tel_code = forms.CharField(required=False, widget=forms.Select(choices=TEL_CODES, attrs={"class":"form-control"}))
 	telephone = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={"placeholder":"eg 781567890", "class":"form-control"}))
+	# is_waiter = forms.BooleanField(required=False)
 	password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"class":"form-control"}))
 	confirm_password = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"class":"form-control"}))
 

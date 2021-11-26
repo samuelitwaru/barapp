@@ -30,8 +30,9 @@ class UpdateProductForm(CreateProductForm):
 
 class UpdateProductCategoriesForm(forms.Form):
 
-	def __init__(self, categories=None, product=None, *args, **kwargs):
+	def __init__(self, categories=[], product=None, *args, **kwargs):
 		super().__init__(*args, **kwargs)
+		self.category_count = len(categories)
 		if categories and product:
 			self.categories = categories
 			self.product = product

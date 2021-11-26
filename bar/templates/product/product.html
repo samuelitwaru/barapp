@@ -18,13 +18,13 @@
 
             <div class="container-fluid">
                 <div class="p-2 d-flex mb-2 border">
-                    <div class="flex-fill">
-                        {% if default_sale_guide %}
-                            <div class="px-1 my-auto">
-                                <label>Stock Available:</label>
-                                <strong>{{object.quantity|floatformat:2}} ({{object.purchase_metric}})</strong>
-                            </div>
+                    <div class="flex-fill my-auto">
+                        <div class="px-1 my-auto">
+                            <label>Stock Available:</label>
+                            <strong>{{object.quantity|floatformat:2}} ({{object.purchase_metric}})</strong>
+                        </div>
 
+                        {% if default_sale_guide %}
                             <div class="px-1 my-auto">
                                 <label>Stock Value:</label>
                                 <strong>
@@ -37,18 +37,23 @@
                     </div>
                     <a href="{% url 'bar:add_product_stock' id=object.id %}" class="btn btn-success btn-sm my-auto">+ Stock</a>
                 </div>
+
+                {% if update_product_categories_form.category_count %}
                 <form action="{% url 'bar:update_product_categories' id=object.id %}" method="POST" class="d-flex justify-content-between flex-nowrap py-1 overflow-auto">
                     {% csrf_token %}
                     <div class="border d-flex flex-nowrap py-1 overflow-auto">
                         {% for field in update_product_categories_form %}
                             {% render_field field %}
                         </a>
+                        {% empty %}
+                        hello
                         {% endfor %}
                     </div>
                     <div class="px-2 my-auto">
                         <button type="submit" class="btn btn-sm btn-primary" >Save</button>
                     </div>
                 </form>
+                {% endif %}
 
             	<div class="row mt-2">
             		<div class="col-md-6 mb-2">

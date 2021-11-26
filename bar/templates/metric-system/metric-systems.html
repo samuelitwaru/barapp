@@ -122,7 +122,6 @@
         data: {
         	metricSystems: [],
         	metricSystem: null,
-
             unit: '',
             symbol: '',
             multiplier: '',
@@ -201,23 +200,33 @@
             },
 
             deleteMetric(metric){
-                if (confirm(`Delete the metric ${metric.unit}?`)) {
-                    this.showLoading = true
-                    fetch(`/api/metrics/${metric.id}/`, {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": 'application/json',
-                            "X-CSRFToken":'{{csrf_token}}'
-                        },
-                    })
-                    .then((response)=>{
-                        if(response.ok){
-                            this.metricSystem.metrics = this.metricSystem.metrics.filter(m=>m.id!=metric.id)
-                        }
-                        this.showLoading = false
-                    })
-                    
+                if (metric==this.baseMetric){
+                    res = confirm("Deleting the base metric will delete all metrics in this metric system. Do you want to continue?")
+                    if (!res){return}
                 }
+                else {
+                    res = confirm(`Delete the metric ${metric.unit}?`)
+                    if (!res){return}
+                }
+                this.showLoading = true
+                fetch(`/api/metrics/${metric.id}/`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "X-CSRFToken":'{{csrf_token}}'
+                    },
+                })
+                .then(response=>response.json())
+                //     console.log()
+                //     // if(response.ok){
+                //     //     this.metricSystem.metrics = this.metricSystem.metrics.filter(m=>m.id!=metric.id)
+                //     // }
+                //     // this.showLoading = false
+                // })
+                .then(data => {
+                    this.metricSystem.metrics=data
+                    this.showLoading = false
+                })
             }
         }
     });
