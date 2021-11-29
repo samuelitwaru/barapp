@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import TemplateView, DetailView
-from ..models import Product, Category
+from ..models import Product, Category, Purchase
 from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm, AddProductStockForm
 
 
@@ -141,6 +141,9 @@ def add_product_stock(request, id):
 			product.purchase_price = new_purchase_price
 			product.quantity += quantity
 			product.save()
+			Purchase.objects.create(product_name=product.name, purchase_price=new_purchase_price, 
+				purchase_metric=new_purchase_metric.unit, quantity=quantity, product_id=product.id
+				)
 			messages.success(request, "Product stock added")
 			return redirect('bar:get_product', id=product.id)
 

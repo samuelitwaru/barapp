@@ -1,6 +1,6 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light bg-primary text-light">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-light bg-primary text-light px-0">
+    <div class="container-fluid px-1">
         <div class="my-auto">
             <h3 class="d-inline m-0" href="">BarApp</h3>
         </div>
@@ -30,7 +30,7 @@
             
             <a href="{% url 'bar:orders' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
-                    <img class="img-thumbnail" src="{% static 'img/orders.jpeg' %}" style="height: 5rem; width: 5rem"/>
+                    <img class="img-thumbnail" src="{% static 'img/orders.jpg' %}" style="height: 5rem; width: 5rem"/>
                     Orders
                 </div>
             </a>
@@ -53,6 +53,22 @@
         <hr>
 
         <div class="d-flex flex-wrap justify-content-around">
+
+
+            <a href="{% url 'bar:get_order_groups' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/all-orders.jpeg' %}" style="height: 5rem; width: 5rem"/>
+                    All Orders
+                </div>
+            </a>
+
+            <a href="{% url 'bar:get_purchases' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+                <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
+                    <img src="{% static 'img/purchases.png' %}" style="height: 5rem; width: 5rem"/>
+                    Purchases
+                </div>
+            </a>
+
             <a href="{% url 'bar:get_products' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
                     <img src="{% static 'img/products.png' %}" style="height: 5rem; width: 5rem"/>
@@ -66,6 +82,8 @@
                     Metrics
                 </div>
             </a>
+
+
 
             <a href="{% url 'bar:get_profiles' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">

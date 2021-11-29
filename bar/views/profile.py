@@ -20,9 +20,10 @@ def get_profiles(request):
 def get_profile(request, id):
 	profile = Profile.objects.filter(id=id).first()
 	user = profile.user
+	groups = user.groups
 	tel_code, telephone = split_telephone(profile.telephone)
 	update_user_password_form = UpdateUserPasswordForm()
-	update_user_form = UpdateUserForm(data={"name": profile.name, "email":profile.email, "tel_code":tel_code, "telephone":telephone, "is_active":profile.user.is_active}, profile=profile)
+	update_user_form = UpdateUserForm(data={"name": profile.name, "email":profile.email, "tel_code":tel_code, "telephone":telephone, "user_group":getattr(groups.first(), "id", None), "is_active":profile.user.is_active}, profile=profile)
 	update_user_permissions_form = UpdateUserPermissionsForm({
 			"can_make_orders": user.has_perm('bar.can_make_orders'),
 			"can_mark_orders_as_ready": user.has_perm('bar.can_mark_orders_as_ready'),
@@ -30,6 +31,8 @@ def get_profile(request, id):
 		})
 	context = {
 		"profile": profile,
+		"groups": groups.all(),
+		"group": groups.first(),
 		"update_user_form": update_user_form,
 		"update_user_password_form": update_user_password_form,
 		"update_user_permissions_form": update_user_permissions_form,

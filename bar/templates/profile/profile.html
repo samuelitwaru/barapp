@@ -12,7 +12,6 @@
 	    </div>
 		<div class="container">
 	        <div class="row">
-
 	        	<div class="col-md-6">
 	        		<div class="p-2 border mb-2">
 		                <h4 class="my-auto">User Profile</h4>
@@ -22,6 +21,7 @@
 						{% render_field update_user_form.name %}
 						{% render_field update_user_form.email %}
 						{% render_field update_user_form.telephone tel_code=update_user_form.tel_code %}
+						{% render_field update_user_form.user_group %}
 						{% render_field update_user_form.is_active %}
 						<div class="p-2" align="right">
 							<button class="btn btn-primary">Update User Profile</button>
@@ -30,6 +30,7 @@
 				</div>
 
 	        	<div class="col-md-6">
+	        		{% if group.id != 3 %}
 	        		<div class="p-2 border mb-2">
 		                <h4 class="my-auto">User Password</h4>
 		            </div>
@@ -42,19 +43,7 @@
 							<button class="btn btn-primary">Update User Password</button>
 						</div>
 					</form>
-	        		<div class="p-2 border mb-2">
-		                <h4 class="my-auto">User Permissions</h4>
-		            </div>
-		            <form method="POST" class="border" action="{% url 'bar:update_user_permissions' id=profile.user_id %}" align="left">
-		            	{% csrf_token %}
-						{% render_field update_user_permissions_form.can_make_orders %}
-						{% render_field update_user_permissions_form.can_mark_orders_as_ready %}
-						{% render_field update_user_permissions_form.can_mark_orders_as_served %}
-					
-						<div class="p-2" align="right">
-							<button class="btn btn-primary">Update User Permissions</button>
-						</div>
-					</form>
+					{% endif %}
 	        	</div>
 	        </div>
 	    </div>

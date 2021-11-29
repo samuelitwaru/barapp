@@ -2,6 +2,8 @@ from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.models import Permission
 from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
+from django.http import HttpResponseRedirect 
+from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from ..models import User, Profile
@@ -29,11 +31,15 @@ def create_user(request):
 		create_user_form = CreateUserForm(request.POST)
 		if create_user_form.is_valid():
 			data = create_user_form.cleaned_data
+			group = Group.objects.get(id=data['user_group'])
 			user = User.objects.create(username=data["email"], email=data["email"])
 			user.set_password(data["password"])
+			user.groups.set([group])
 			user.save()
 			profile = Profile.objects.create(name=data["name"], email=data["email"], telephone=data["telephone"], user=user)
 			messages.success(request, "User created")
+			# next = request.META.get('HTTP_REFERER', None) or '/'
+			# return HttpResponseRedirect(next)
 			return redirect('bar:update_user', id=user.id)
 
 	context = {
@@ -51,12 +57,14 @@ def update_user(request, id):
 	update_user_form = UpdateUserForm(data=request.POST, profile=profile)
 	if request.method == "POST" and update_user_form.is_valid():
 		data = update_user_form.cleaned_data
+		group = Group.objects.get(id=data['user_group'])
 		profile.name = data["name"]
 		profile.email = data["email"]
 		profile.telephone = data["telephone"]
 		user.email = data["email"]
 		user.username = data["email"]
 		user.is_active = data["is_active"]
+		user.groups.set([group])
 		profile.save()
 		user.save()
 		messages.success(request, f"User updated.")

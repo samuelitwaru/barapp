@@ -1,4 +1,6 @@
+import os
 from django import forms
+from django.contrib.auth.models import Group
 from .profile import UpdateProfileForm
 from ..utils import TEL_CODES, join_telephone
 from ..models import User, Profile
@@ -10,17 +12,30 @@ class CreateUserForm(forms.Form):
 	email = forms.EmailField(widget=forms.TextInput(attrs={"class":"form-control"}))
 	tel_code = forms.CharField(required=False, widget=forms.Select(choices=TEL_CODES, attrs={"class":"form-control"}))
 	telephone = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={"placeholder":"eg 781567890", "class":"form-control"}))
-	# is_waiter = forms.BooleanField(required=False)
-	password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"class":"form-control"}))
-	confirm_password = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"class":"form-control"}))
+	user_group = forms.ChoiceField(widget=forms.RadioSelect(attrs={"v-model":"userGroup"}))
+	password = forms.CharField(required=False, label="Password", widget=forms.PasswordInput(attrs={"class":"form-control", ":required":"!isWaiter"}))
+	confirm_password = forms.CharField(required=False, label="Confirm password", widget=forms.PasswordInput(attrs={"class":"form-control", ":required":"!isWaiter"}))
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields["user_group"].choices = [(group.id, group.name) for group in Group.objects.all()]
 
 	def clean(self):
 		cleaned_data = super().clean()
 		email = cleaned_data.get("email")
 		tel_code = cleaned_data.get("tel_code")
 		telephone = cleaned_data.get("telephone")
-		password = cleaned_data.get("password")
-		confirm_password = cleaned_data.get("confirm_password")
+		is_waiter = int(cleaned_data.get("user_group")) == 3
+
+		if is_waiter:
+			self.fields["password"].required = False
+			self.fields["confirm_password"].required = False
+			cleaned_data["password"] = os.environ["DEFAULT_PASSWORD"]
+		else:
+			password = cleaned_data.get("password")
+			confirm_password = cleaned_data.get("confirm_password")
+			if password != confirm_password:
+				self.add_error('confirm_password', "Passwords do not match!")
 
 		if User.objects.filter(username=email).count():
 			self.add_error('email', "A user with this email address already exists.")
@@ -34,12 +49,15 @@ class CreateUserForm(forms.Form):
 		if telephone and Profile.objects.filter(telephone=telephone).count():
 			self.add_error('telephone', "A user with this telephone number already exists.")
 
-		if password != confirm_password:
-			self.add_error('confirm_password', "Passwords do not match!")
-
 
 class UpdateUserForm(UpdateProfileForm):
 	is_active = forms.BooleanField(label="User is ACTIVE", required=False)
+	user_group = forms.ChoiceField(widget=forms.RadioSelect(attrs={"v-model":"userGroup"}))
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields["user_group"].choices = [(group.id, group.name) for group in Group.objects.all()]
+
 
 
 class UpdateUserPasswordForm(forms.Form):

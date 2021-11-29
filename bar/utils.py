@@ -22,3 +22,7 @@ def join_telephone(code, telephone, joiner="-"):
 
 def split_telephone(telephone, splitter="-"):
 	return telephone.split(splitter)
+
+
+def create_purchase_from_stock():
+	pass

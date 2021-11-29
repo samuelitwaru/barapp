@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+{% load humanize %}
+
+
+{% block body %}
+	<div id="app">
+        <div v-if="!showPrint">
+            {% include 'index/nav.html' %}
+            {% include 'index/alert.html' %}
+        </div>
+
+        <div class="d-flex bg-light p-2 justify-content-between">
+	        <h3 class="my-auto">All Orders</h3>
+            <button v-show="!showPrint" @click="printPage"><span class="fa fa-print"></span> Print</button>
+	    </div>
+
+        <table class="table table-bordered table-hover">
+        	<thead>
+        		<th>Order</th>
+                <th>Date</th>
+        		<th>Status</th>
+                <th>Total</th>
+                <th v-show="!showPrint">Action</th>
+        	</thead>
+
+        	<tbody>
+        		{% for order_group in order_groups %}
+        		<tr>
+                    <td>{{order_group.reference}}</a></td>
+                    <td>{{order_group.created_at}}</td>
+        			<td>{% if order_group.closed %}CLOSED{% else %}OPEN{% endif %}</td>
+        			<td>{{order_group.total|intcomma}}</td>
+        			<td v-show="!showPrint">
+                        <a href="{% url 'bar:get_order_group' id=order_group.id %}" class="btn btn-primary btn-sm">View</a>         
+                    </td>
+        		</tr>
+        		{% endfor %}
+        	</tbody>
+        </table>
+    </div>
+
+
+{% endblock %}
+
+{% block vue %}
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            showPrint: false,
+        },
+        created: function() {
+            
+        },
+        computed: {
+            
+        },
+        methods: {
+            printPage(){
+                this.showPrint = true
+                setTimeout(()=>{print();this.showPrint = false})
+            }
+        }
+    });
+</script>
+{% endblock %}

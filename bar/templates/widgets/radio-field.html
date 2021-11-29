@@ -1,5 +1,5 @@
-<div class="form-group">
-	<small>{{field.label}}</small>
+<div class="form-group p-2">
+	<label>{{field.label}} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}</label>
 	<div class="form-control" style="height: auto">
 		{% for radio in field %}
 			<div>

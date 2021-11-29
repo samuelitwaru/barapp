@@ -24,6 +24,7 @@ urlpatterns = [
 	path('', index, name='index'),
 	path('home', TemplateView.as_view(template_name='pages/trial.html'), name='index'),
 	path('login', login_view, name='login'),
+	path('login/waiter/<int:id>', login_waiter, name='login_waiter'),
 	path('logout', logout_view, name='logout'),
 	
 	path('orders', orders, name='orders'),
@@ -31,9 +32,13 @@ urlpatterns = [
 	path('orders/update/<int:order_group_id>', update_orders, name='update_orders'),
 	path('orders/update/status', update_order_status, name='update_order_status'),
 	
+	path('order-groups', get_order_groups, name='get_order_groups'),
 	path('order-groups/<int:id>', get_order_group, name='get_order_group'),
+	path('order-groups/<int:id>/open-or-close', open_or_close_order_group, name='open_or_close_order_group'),
 	path('order-groups/<int:id>/delete', delete_order_group, name='delete_order_group'),
 	
+	path('purchases', get_purchases, name='get_purchases'),
+
 	path('profile', get_current_user_profile, name='get_current_user_profile'),
 	path('profile/update', update_current_user_profile, name='update_current_user_profile'),
 	path('profile/password/update', update_current_user_password, name='update_current_user_password'),

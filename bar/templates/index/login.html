@@ -12,23 +12,49 @@
 			<h1 class="text-dark text-center">Welcome to Bar</h1>	
 		</div>
 
-		<div class="border bg-light rounded-top" style="max-width:400">
+		<div class="border bg-light rounded-top" style="max-width:400; min-height: 300">
 			
-			<label class="text-center bg-light d-inline border shadow p-2">Login</label>
-
-			{% include 'index/alert.html' %}
+			<ul class="d-flex nav nav-pills p-2 justify-content-center" id="pills-tab" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab" aria-controls="pills-login" aria-selected="true">Login</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="pills-waiter-tab" data-bs-toggle="pill" data-bs-target="#pills-waiter" type="button" role="tab" aria-controls="pills-waiter" aria-selected="false">Waiter</button>
+				</li>
+			</ul>
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
+					{% include 'index/alert.html' %}
 			
-			<form class="m-0" method="POST" action="" align="left">
-				{% csrf_token %}
-				
-				{% render_field form.email class='form-control' %}
-				{% render_field form.password class='form-control' %}
-				
-				<div align="center" class="bg-white border-top p-3 mt-3 mb-0">
-					<button class="btn btn-primary">Login <span class="fa fa-sign-in"></span></button>
-					<!-- <a href= "" class="nav-link">Forgot Password</a> -->
+					<form class="m-0" method="POST" action="" align="left">
+						{% csrf_token %}
+						
+						{% render_field form.email class='form-control' %}
+						{% render_field form.password class='form-control' %}
+						
+						<div align="center" class="bg-white border-top p-3 mt-3 mb-0">
+							<button class="btn btn-primary">Login <span class="fa fa-sign-in"></span></button>
+							<!-- <a href="" class="nav-link">Forgot Password</a> -->
+						</div>
+					</form>
 				</div>
-			</form>
+				<div class="tab-pane fade p-2" id="pills-waiter" role="tabpanel" aria-labelledby="pills-waiter-tab"  align="left">
+					<ul class="list-group">
+						{% for waiter in waiters %}
+							<a class="nav-link" href="{% url 'bar:login_waiter' id=waiter.id %}">
+								<li class="d-flex justify-content-between list-group-item list-group-item-action my-1 border rounded hover-scale">
+									{{waiter.profile}}
+									<span class="fa fa-arrow-right my-auto"></span>
+								</li>
+							</a>
+						{% empty %}
+							<p class="text-center text-muted">There are no registered waiters</p>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+
+			
 		</div>
 	</div>
 {% endblock %}

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from ..models import User
 from ..forms import LoginForm
 
 
@@ -27,9 +28,22 @@ def login_view(request):
         if get_user(request).is_authenticated:
             return redirect('bar:create_orders')
 
+        waiters = User.objects.filter(groups__name='Waiter').all()
+
         form = LoginForm()
-        context = {"form": form}
+        context = {"form": form, "waiters": waiters}
         return render(request, 'index/login.html', context)
+
+
+def login_waiter(request, id):
+    _next = request.GET.get("next", "bar:create_orders")
+    user = User.objects.filter(groups__name='Waiter').filter(id=id).first()
+    if user:
+        login(request, user)
+        return redirect(_next)
+    messages.error(request, f"Could not identify user")
+    return redirect('bar:login')
+
 
 
 def forgot_password(request):

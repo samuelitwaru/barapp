@@ -93,6 +93,9 @@ class OrderGroup(TimeStampedModel):
 	def __str__(self):
 		return self.reference
 
+	def total(self):
+		return sum([(order.quantity*order.sale_price) for order in self.order_set.all()])
+
 
 class Order(TimeStampedModel):
 	reference = models.CharField(max_length=128)
@@ -122,6 +125,13 @@ class Order(TimeStampedModel):
 
 
 
+class Purchase(TimeStampedModel):
+	quantity = models.IntegerField()
+	product_name = models.CharField(max_length=128)
+	purchase_price = models.IntegerField()
+	purchase_metric = models.CharField(max_length=128)
+	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
+	
 
 class Profile(models.Model):
     name = models.CharField(max_length=256)
