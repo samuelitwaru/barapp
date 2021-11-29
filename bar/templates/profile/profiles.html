@@ -17,8 +17,8 @@
         <table class="table table-bordered table-hover">
         	<thead>
         		<th>Name</th>
-        		<th>Email</th>
-                <th>Telephone</th>
+        		<th>Contact</th>
+                <th>Group</th>
         		<th></th>
         	</thead>
 
@@ -26,8 +26,11 @@
         		{% for profile in profiles %}
         		<tr>
                     <td><a href="{% url 'bar:get_profile' id=profile.id %}" class="nav-link p-0">{{profile.name}}</a></td>
-        			<td>{{profile.email}}</td>
-        			<td>{{profile.telephone}}</td>
+        			<td>
+                        {{profile.email}}<br>
+                        <small>{{profile.telephone}}</small>
+                    </td>
+                    <td>{{profile.roles}}</td>
         			<td><a href="{% url 'bar:get_profile' id=profile.id %}" class="btn btn-primary btn-sm">View</a></td>
         		</tr>
         		{% endfor %}

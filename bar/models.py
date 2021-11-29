@@ -141,3 +141,6 @@ class Profile(models.Model):
 
     def __str__(self):
     	return self.name
+
+    def roles(self):
+    	return ', '.join([group.name for group in self.user.groups.all()])
