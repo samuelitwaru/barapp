@@ -28,7 +28,7 @@
                             <div class="px-1 my-auto">
                                 <label>Stock Value:</label>
                                 <strong>
-                                    {{object.quantity|multiply:default_sale_guide.price|floatformat:0|intcomma}}
+                                    {{quantity_in_default_sale_guide_metric|multiply:default_sale_guide.price|floatformat:0|intcomma}}
                                 </strong>
                             </div>
                         {% else %}

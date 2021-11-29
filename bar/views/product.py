@@ -62,9 +62,12 @@ def get_product(request, id):
 		"purchase_metric": getattr(product.purchase_metric, "id", None),
 		"purchase_price": product.purchase_price,
 	}, product=product)
+	default_sale_guide = product.sale_guides.first()
+	quantity_in_default_sale_guide_metric = product.metric_system.convert(product.quantity, product.purchase_metric, default_sale_guide.metric)
 	context = {
 		"object": product,
-		"default_sale_guide": product.sale_guides.first(),
+		"default_sale_guide": default_sale_guide,
+		"quantity_in_default_sale_guide_metric": quantity_in_default_sale_guide_metric,
 		"update_product_form": update_product_form,
 		"update_product_categories_form": update_product_categories_form,
 		"update_product_purchasing_form": update_product_purchasing_form,
