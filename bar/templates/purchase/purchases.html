@@ -14,28 +14,29 @@
 	        <h3 class="my-auto">Purchases</h3>
             <button v-show="!showPrint" @click="printPage"><span class="fa fa-print"></span> Print</button>
 	    </div>
+        <div class="overflow-auto">
+            <table class="table table-bordered table-hover">
+            	<thead>
+            		<th>Product</th>
+            		<th>Date</th>
+            		<th>Quantity</th>
+            		<th>Rate</th>
+                    <th>Total</th>
+            	</thead>
 
-        <table class="table table-bordered table-hover">
-        	<thead>
-        		<th>Product</th>
-        		<th>Date</th>
-        		<th>Quantity</th>
-        		<th>Rate</th>
-                <th>Total</th>
-        	</thead>
-
-        	<tbody>
-        		{% for purchase in purchases %}
-        		<tr>
-                    <td>{{purchase.product_name}}</a></td>
-        			<td>{{purchase.created_at}}</td>
-        			<td>{{purchase.quantity}}</td>
-        			<td>{{purchase.purchase_price}} @ ({{purchase.purchase_metric}})</td>
-        			<td>{{purchase.quantity|multiply:purchase.purchase_price|intcomma}}</td>
-        		</tr>
-        		{% endfor %}
-        	</tbody>
-        </table>
+            	<tbody>
+            		{% for purchase in purchases %}
+            		<tr>
+                        <td>{{purchase.product_name}}</a></td>
+            			<td>{{purchase.created_at}}</td>
+            			<td>{{purchase.quantity}}</td>
+            			<td>{{purchase.purchase_price}} @ ({{purchase.purchase_metric}})</td>
+            			<td>{{purchase.quantity|multiply:purchase.purchase_price|intcomma}}</td>
+            		</tr>
+            		{% endfor %}
+            	</tbody>
+            </table>
+        </div>
     </div>
 
 

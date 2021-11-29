@@ -1,4 +1,5 @@
 {% load static %}
+{% load app_tags %}
 <nav class="navbar navbar-expand-lg navbar-light bg-primary text-light px-0">
     <div class="container-fluid px-1">
         <div class="my-auto">
@@ -50,8 +51,9 @@
             </a>
         </div>
 
-        <hr>
 
+        {% if user|has_group:"Admin" %}
+        <hr>
         <div class="d-flex flex-wrap justify-content-around">
 
 
@@ -92,5 +94,6 @@
                 </div>
             </a>
         </div>
+        {% endif %}
     </div>
 </div>
