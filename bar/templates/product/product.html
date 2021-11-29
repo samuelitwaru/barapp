@@ -200,8 +200,8 @@
             },
 
             deleteSaleGuide(saleGuide){
-                this.showLoading = true
                 if (confirm(`Delete the sale guide ${saleGuide.price}@${saleGuide.metric.unit}?`)) {
+                    this.showLoading = true
                     fetch(`/api/sale-guides/${saleGuide.id}/`, {
                         method: "DELETE",
                         headers: {
