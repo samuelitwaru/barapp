@@ -13,8 +13,8 @@ class CreateUserForm(forms.Form):
 	tel_code = forms.CharField(required=False, widget=forms.Select(choices=TEL_CODES, attrs={"class":"form-control"}))
 	telephone = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={"placeholder":"eg 781567890", "class":"form-control"}))
 	user_group = forms.ChoiceField(widget=forms.RadioSelect(attrs={"v-model":"userGroup"}))
-	password = forms.CharField(required=False, label="Password", widget=forms.PasswordInput(attrs={"class":"form-control", ":required":"!isWaiter"}))
-	confirm_password = forms.CharField(required=False, label="Confirm password", widget=forms.PasswordInput(attrs={"class":"form-control", ":required":"!isWaiter"}))
+	password = forms.CharField(required=False, label="Password", widget=forms.PasswordInput(attrs={"class":"form-control", ":required":"!userGroup"}))
+	confirm_password = forms.CharField(required=False, label="Confirm password", widget=forms.PasswordInput(attrs={"class":"form-control", ":required":"!userGroup"}))
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
