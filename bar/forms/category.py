@@ -18,7 +18,6 @@ class UpdateCategoryForm(CreateCategoryForm):
 
 	def clean(self):
 		name = self.data.get("name")
-		print(">>>>>fdoingn", Category.objects.exclude(id=self.category.id).filter(name=name).count())
 		if Category.objects.exclude(id=self.category.id).filter(name=name).count():
 			self.add_error('name', "Product with this barcode already exists")
 

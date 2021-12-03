@@ -3,9 +3,8 @@
 
 
 {% block body %}
-	<div id="app">
-    	{%verbatim%}{{name}}{%endverbatim%}
-    	
+	<div id="app">    	
+    	{%verbatim%}{{data0}}{%endverbatim%}
     	<p><router-link to="/">Go to page 1</router-link></p>
 		<p><router-link to="/page2">Go to page 2</router-link></p>
 		<p>
@@ -14,11 +13,14 @@
     	</p>
     </div>
 
+    <a href="#order" @click="go()">GO</a>
+
+
     <script type="text/x-template" id="page1" verson='1.0'>
     	<div>
     		<div>
     			Page 1
-				<!-- {%verbatim%}{{version}}{%endverbatim%} -->
+				{%verbatim%}{{data1}}-{{page2Data}}{%endverbatim%}
     		</div>
     	</div>
     </script>
@@ -27,7 +29,7 @@
     	<div>
     		<div>
     			Page 2
-				{%verbatim%}{{name}}{%endverbatim%}
+				{%verbatim%}{{data2}}-{{page1Data}}{%endverbatim%}
     		</div>
     	</div>
     </script>
@@ -35,20 +37,44 @@
 
 {% block vue %}
 <script type="text/javascript">
-	var PageOneComponent = Vue.component('page1', {
+	var Page1 = {
 		template: "#page1",
-		data() {
+		data(){
 			return {
-				name: "dan",
+				data1: "1",
 			}
 		},
-	})
-	var PageTwoComponent = Vue.component('page2', {template:"#page2"})
+		computed: {
+			page2Data(){
+				return JSON.parse(localStorage.getItem("page2Data"))
+			}
+		},
+		created: function(){
+			this.$parent.data0 = "sam"
+			localStorage.setItem("page1Data", JSON.stringify(this._data))
+		}
+	}
+	var Page2 = {
+		template: "#page2",
+		data(){
+			return {
+				data2: "2",
+			}
+		},
+		computed: {
+			page1Data(){
+				return JSON.parse(localStorage.getItem("page1Data"))
+			}
+		},
+		created: function(){
+			localStorage.setItem("page2Data", JSON.stringify(this._data))
+		}
+	}
 
 
 	const routes = [
-		{path:'/', component: PageOneComponent},
-		{path:'/page2', component: PageTwoComponent},
+		{path:'/', component: Page1},
+		{path:'/page2', component: Page2},
 	]
 
 	const router = new VueRouter({
@@ -58,8 +84,12 @@
 	var app = new Vue({
 		router,
 		data: {
-			name: "sam",
-			version: 1.0,
+			data0: "0",
+		},
+		methods: {
+			go(){
+				console.load("hello")
+			}
 		}
 	}).$mount('#app')
 </script>

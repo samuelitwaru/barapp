@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .utils import STATUS_CHOICES, PENDING
+from .utils import STATUS_CHOICES, PENDING, PAID
 
 
 # Create your models here.
@@ -42,6 +42,7 @@ class Product(TimeStampedModel):
 	description = models.CharField(max_length=2048, null=True)
 	barcode = models.CharField(max_length=128, null=True, unique=True)
 	quantity = models.FloatField(default=0)
+	stock_limit = models.FloatField(default=0)
 	purchase_price = models.IntegerField(null=True)
 	metric_system = models.ForeignKey(MetricSystem, null=True, on_delete=models.SET_NULL)
 	purchase_metric = models.ForeignKey(Metric, null=True, on_delete=models.SET_NULL)
@@ -50,10 +51,24 @@ class Product(TimeStampedModel):
 	def __str__(self):
 		return self.name
 
+	def stock_value(self):
+		quantity_in_default_sale_guide_metric = 0
+		default_sale_guide = self.sale_guides.first()
+		if default_sale_guide:
+			quantity_in_default_sale_guide_metric = self.metric_system.convert(self.quantity, self.purchase_metric, default_sale_guide.metric)
+			return quantity_in_default_sale_guide_metric * default_sale_guide.price
+
 	def update_quantity_by(self, quantity, metric):
 		if self.purchase_metric!=metric:
 			quantity = self.metric_system.convert(quantity, metric, self.purchase_metric)
 		self.quantity += quantity
+		self.save()
+
+	def convert_quantities(self, old_purchase_metric, new_purchase_metric):
+		quantity = self.metric_system.convert(self.quantity, old_purchase_metric, new_purchase_metric)
+		stock_limit = self.metric_system.convert(self.stock_limit, old_purchase_metric, new_purchase_metric)
+		self.quantity = quantity
+		self.stock_limit = stock_limit
 		self.save()
 
 
@@ -89,6 +104,7 @@ class OrderGroup(TimeStampedModel):
 	closed = models.BooleanField(default=False)
 	waiter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='waiter')
 	cashier = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='cashier')
+	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=PAID)
 
 	def __str__(self):
 		return self.reference

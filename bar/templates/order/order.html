@@ -1,14 +1,14 @@
-<!-- Modal -->
-<div class="modal" id="orderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-fullscreen">
-		<div class="modal-content">
+
+		<div>
 			<div class="modal-header px-2">
+				<button type="button" class="btn btn-link  p-0" @click="goBack()"><span class="fa fa-angle-left fa-2x"></span></button>
 				<h5 class="modal-title" id="exampleModalLabel">
 					{%verbatim%}{{currentRef}}{%endverbatim%}
-					<span v-if="!orderGroup.closed" class="badge bg-success">open</span>
-					<span v-if="orderGroup.closed" class="badge bg-danger">closed</span>
 				</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				<div>
+					<span v-if="!orderGroup.closed" class="badge bg-success my-auto">open</span>
+					<span v-if="orderGroup.closed" class="badge bg-danger my-auto">closed</span>
+				</div>
 			</div>
 
 			<div class="modal-body p-0">
@@ -51,7 +51,7 @@
 				</table>
 			</div>
 
-			<div class="modal-footer justify-content-between" v-if="showFooter">
+			<div class="px-1 d-flex align-items-center fixed-bottom justify-content-between" v-if="!showPrint">
 				<button class="btn btn-info" @click="printOrder()"><span class="fa fa-print"></span> Print</button>
 				<a v-if="!orderGroup.closed" class="btn btn-info" :href="'/orders/update/'+orderGroup.id"><span class="fa fa-pencil"></span> Edit</a>
 				<form v-if="currentStatus==0" align="right" method="POST" action="{% url 'bar:update_order_status' %}" class="p-2 border">
@@ -72,7 +72,7 @@
         			<div class="form-check">
 	        			<input class="form-check-input" type="checkbox" name="check" value="2" id="check" required>
 						<label class="form-check-label" for="check">
-							Order is SERVED
+							Order is PAID
 						</label>
 					</div>
 					<br>
@@ -86,5 +86,4 @@
 				<button v-if="currentStatus==2 && orderGroup.closed" class="btn btn-success" @click="updateOrderGroupClosedState(orderGroup)" data-bs-dismiss="modal"><span class="fa fa-unlock"></span> Open</button>
 			</div>
 		</div>
-	</div>
-</div>
+	

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import F
 from django.views.generic import TemplateView, DetailView
 from ..models import Product, Category, Purchase
 from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm, AddProductStockForm
@@ -12,6 +13,9 @@ class ProductsPageView(TemplateView):
 		context = super().get_context_data(**kwargs)
 		create_category_form = CreateCategoryForm()
 		context['products'] = Product.objects.all()
+		low_stock_products = Product.objects.filter(quantity__lte=F("stock_limit")).all()
+		if low_stock_products:
+			messages.error(self.request, f"{len(low_stock_products)} Product(s) have low stock!", extra_tags="danger")
 		context['categories'] = Category.objects.all()
 		return context
 
@@ -89,8 +93,7 @@ def update_product_purchasing(request, id):
 		new_purchase_price = data["purchase_price"]
 
 		if old_purchase_metric and old_purchase_metric != new_purchase_metric:
-			quantity = product.metric_system.convert(product.quantity, old_purchase_metric, new_purchase_metric)
-			product.quantity = quantity
+			product.convert_quantities(old_purchase_metric, new_purchase_metric)
 		
 		product.purchase_metric = new_purchase_metric
 		product.purchase_price = new_purchase_price
@@ -141,8 +144,8 @@ def add_product_stock(request, id):
 			new_purchase_price = data["purchase_price"]
 			quantity = data["quantity"]
 			if old_purchase_metric and old_purchase_metric != new_purchase_metric:
-				new_quantity = product.metric_system.convert(product.quantity, old_purchase_metric, new_purchase_metric)
-				product.quantity = new_quantity
+				product.convert_quantities(old_purchase_metric, new_purchase_metric)
+
 			product.purchase_metric = new_purchase_metric
 			product.purchase_price = new_purchase_price
 			product.quantity += quantity

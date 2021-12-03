@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='status',
-            field=models.SmallIntegerField(choices=[(0, 'PENDING'), (1, 'READY'), (2, 'SERVED')], default=0),
+            field=models.SmallIntegerField(choices=[(0, 'PENDING'), (1, 'READY'), (2, 'PAID')], default=0),
         ),
     ]

@@ -1,11 +1,11 @@
 from datetime import datetime
 from random import randint
 
-PENDING, READY, SERVED = range(3)
+PENDING, READY, PAID = range(3)
 STATUS_CHOICES = (
 	(PENDING, 'PENDING'),
 	(READY, 'READY'),
-	(SERVED, 'SERVED'),
+	(PAID, 'PAID'),
 )
 
 TEL_CODES = [("256", "+256"),]

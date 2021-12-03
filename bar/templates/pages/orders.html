@@ -7,11 +7,15 @@
             {% include 'index/loading.html' %}
         </div>
         <template>
-            {% include 'index/nav.html' %}        
-
-            {% include 'order/orders.html' %}
-
-            {% include 'order/order.html' %}
+            <div v-show="!showPrint">
+                {% include 'index/nav.html' %}        
+            </div>
+            <div v-show="!showOrder">
+                {% include 'order/orders.html' %}
+            </div>
+            <div v-show="showOrder">
+                {% include 'order/order.html' %}
+            </div>
         </template>
     </div>
 
@@ -25,22 +29,23 @@
         el: '#app',
         data(){ 
             return{
-            0: [],
-            1: [],
-            2: [],
-            orderGroup: {},
-            orderGroups: [],
-            showLoading: true,
-            currentOrders: [],
-            currentStatus: null,
-            currentRef: '',
-            STATUSES: {
-                0:'PENDING',
-                1:'READY',
-                2:'SERVED'
-            },
-            timeNow: new Date(),
-            showFooter: true,
+                0: [],
+                1: [],
+                2: [],
+                orderGroup: {},
+                orderGroups: [],
+                showLoading: true,
+                currentOrders: [],
+                currentStatus: null,
+                currentRef: '',
+                STATUSES: {
+                    0:'PENDING',
+                    1:'READY',
+                    2:'PAID'
+                },
+                timeNow: new Date(),
+                showPrint: false,
+                showOrder: false,
             }
         },
         created: function() {
@@ -100,6 +105,7 @@
                 this.currentOrders = orderGroup.orders
                 this.currentStatus = orderGroup.orders[0].status
                 this.currentRef = orderGroup.reference
+                this.showOrder = true
             },
 
             totalPrice(){
@@ -176,9 +182,13 @@
             },
 
             printOrder(){
-                this.showFooter = false
-                setTimeout(()=>{print();this.showFooter = true}, 100)
+                this.showPrint = true
+                setTimeout(()=>{print();this.showPrint = false}, 100)
             }, 
+
+            goBack(){
+                this.showOrder = false
+            }
         }
     })
 </script>

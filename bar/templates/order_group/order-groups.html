@@ -15,6 +15,22 @@
             <button v-show="!showPrint" @click="printPage"><span class="fa fa-print"></span> Print</button>
 	    </div>
 
+        <div v-show="!showPrint" class="border-top">
+            <form class="d-flex m-0">
+                <div class="d-flex overflow-auto">
+                    {% render_field filter_order_groups_form.date_gte %}
+                    {% render_field filter_order_groups_form.date_lte %}
+                    {% render_field filter_order_groups_form.status %}
+                </div>
+
+                <div class="my-auto">
+                    <label>&nbsp;</label>
+                    <button class="mb-0 my-auto" type="submit">Filter</button>
+                </div>
+            </form>
+        </div>
+
+
         <div class="overflow-auto">
             <table class="table table-bordered table-hover">
             	<thead>

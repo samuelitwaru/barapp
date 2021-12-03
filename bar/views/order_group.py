@@ -5,14 +5,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect 
 from django.contrib import messages
 from ..models import OrderGroup
+from ..forms import FilterOrderGroupsForm
 from ..utils import STATUS_CHOICES
 
 
 @login_required
 def get_order_groups(request):
+    filter_order_groups_form = FilterOrderGroupsForm()
     order_groups = OrderGroup.objects.order_by("-created_at").all()
     context = {
-        "order_groups": order_groups
+        "order_groups": order_groups,
+        "filter_order_groups_form": filter_order_groups_form
     }
     return render(request, 'order_group/order-groups.html', context)
     

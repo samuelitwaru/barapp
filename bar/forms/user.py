@@ -76,7 +76,7 @@ class UpdateUserPasswordForm(forms.Form):
 class UpdateUserPermissionsForm(forms.Form):
 	can_make_orders = forms.BooleanField(label="User can MAKE orders", required=False)
 	can_mark_orders_as_ready = forms.BooleanField(label="User can mark orders as READY", required=False)
-	can_mark_orders_as_served = forms.BooleanField(label="User can mark orders as SERVED", required=False)
+	can_mark_orders_as_served = forms.BooleanField(label="User can mark orders as PAID", required=False)
 	
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)

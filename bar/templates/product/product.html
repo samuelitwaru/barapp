@@ -24,11 +24,18 @@
                             <strong>{{object.quantity|floatformat:2}} ({{object.purchase_metric}})</strong>
                         </div>
 
+                        <div class="px-1 my-auto">
+                            <label>Stock Limit:</label>
+                            <strong>
+                                <input type="number" min="0" name="stockLimit" v-model="stockLimit" style="max-width: 50;" @change="updateProductStockLimit()"> ({{object.purchase_metric}})
+                            </strong>
+                        </div>
+
                         {% if default_sale_guide %}
                             <div class="px-1 my-auto">
                                 <label>Stock Value:</label>
                                 <strong>
-                                    {{quantity_in_default_sale_guide_metric|multiply:default_sale_guide.price|floatformat:0|intcomma}}
+                                    {{object.stock_value|floatformat:0|intcomma}}
                                 </strong>
                             </div>
                         {% else %}
@@ -135,6 +142,7 @@
             metric: '',
             price: '',
             showLoading: true,
+            stockLimit: parseInt("{{object.stock_limit}}")
         },
         created: function() {
         	this.getProduct()
@@ -219,7 +227,25 @@
                     })
                     
                 }
+            },
+
+            updateProductStockLimit(){
+                this.showLoading = true
+                fetch(`/api/products/{{object.id}}/update_stock_limit/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "X-CSRFToken":'{{csrf_token}}'
+                    },
+                    body: JSON.stringify({stock_limit:this.stockLimit})
+                })
+                .then(response=>response.json())
+                .then((data)=>{
+                    this.product = data
+                    this.showLoading = false
+                })
             }
+
         }
     });
 </script>

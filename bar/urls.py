@@ -64,4 +64,7 @@ urlpatterns = [
 
 	path('categories/create', create_category, name='create_category'),
 	path('categories/<int:id>/', get_category, name='get_category'),
+
+	path('notifications', get_notifications, name='get_notifications'),
+
 ]
