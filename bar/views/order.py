@@ -35,10 +35,12 @@ def update_order_status(request):
         check = request.POST.get("check")
         ref = request.POST.get("ref")
         status = int(request.POST.get("status", 0))
-        if check and ref and status:
-            orders = Order.objects.filter(reference=ref)
-            orders.update(reference=ref, status=status, updated_at=datetime.now())
         
-        status_value = dict(STATUS_CHOICES)[status]
-        messages.success(request, f"Order {ref} has been marked as {status_value}")
-        return redirect(reverse('bar:orders') + f'?status={int(status)-1}')
+        order_group = OrderGroup.objects.get(reference=ref)
+        if order_group and status:
+            order_group.status = status
+            order_group.save()
+        
+            status_value = dict(STATUS_CHOICES)[status]
+            messages.success(request, f"Order {ref} has been marked as {status_value}")
+            return redirect(reverse('bar:orders') + f'?status={int(status)-1}')

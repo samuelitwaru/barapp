@@ -27,6 +27,7 @@
         	categories: [],
         	searchString: '',
             showLoading: true,
+            customer: "",
         },
         created: function() {
         	this.getProducts()
@@ -136,7 +137,7 @@
                         "Content-Type": 'application/json',
                         "X-CSRFToken":'{{csrf_token}}'
                     },
-                    body: JSON.stringify(Object.values(this.orders))
+                    body: JSON.stringify({customer:this.customer, orders:Object.values(this.orders)})
                 })
                 .then(response=>response.json())
                 .then(data=>{

@@ -7,7 +7,7 @@ class CreateProductForm(ModelForm):
 	class Meta:
 		model = Product
 		fields = "__all__"
-		exclude = ("quantity", "categories", "purchase_metric", "purchase_price")
+		exclude = ("quantity", "stock_limit", "categories", "purchase_metric", "purchase_price")
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)

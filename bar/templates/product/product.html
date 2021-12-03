@@ -31,16 +31,18 @@
                             </strong>
                         </div>
 
-                        {% if default_sale_guide %}
-                            <div class="px-1 my-auto">
-                                <label>Stock Value:</label>
-                                <strong>
-                                    {{object.stock_value|floatformat:0|intcomma}}
-                                </strong>
-                            </div>
-                        {% else %}
-                            <small class="text-danger">Add sale guides to view Stock Value!</small>
-                        {% endif %}
+                        {% with stock_value=object.stock_value %}
+                            {% if stock_value %}
+                                <div class="px-1 my-auto">
+                                    <label>Stock Value:</label>
+                                    <strong>
+                                        {{stock_value|floatformat:0|intcomma}}
+                                    </strong>
+                                </div>
+                            {% else %}
+                                <small class="text-danger">Add sale guides to view Stock Value!</small>
+                            {% endif %}
+                        {% endwith %}
                     </div>
                     <a href="{% url 'bar:add_product_stock' id=object.id %}" class="btn btn-success btn-sm my-auto">+ Stock</a>
                 </div>

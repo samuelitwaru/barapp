@@ -11,10 +11,11 @@ from . import order
 
 class OrderGroupSerializer(serializers.ModelSerializer):
 	orders = order.OrderSerializer(source="order_set", many=True, read_only=True)
+	waiter = serializers.CharField(source="waiter.profile")
 	class Meta:
 		model = OrderGroup
 		fields = "__all__"
-		fields = ("id", "reference", "created_at", "updated_at", "closed", "orders",)
+		fields = ("id", "reference", "created_at", "updated_at", "closed", "status", "customer", "waiter", "orders",)
 		read_only_fields = ("reference",)
 
 

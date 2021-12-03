@@ -54,7 +54,7 @@ class Product(TimeStampedModel):
 	def stock_value(self):
 		quantity_in_default_sale_guide_metric = 0
 		default_sale_guide = self.sale_guides.first()
-		if default_sale_guide:
+		if default_sale_guide and self.purchase_metric:
 			quantity_in_default_sale_guide_metric = self.metric_system.convert(self.quantity, self.purchase_metric, default_sale_guide.metric)
 			return quantity_in_default_sale_guide_metric * default_sale_guide.price
 
@@ -70,6 +70,9 @@ class Product(TimeStampedModel):
 		self.quantity = quantity
 		self.stock_limit = stock_limit
 		self.save()
+
+	def default_sale_guide(self):
+		pass
 
 
 class Category(TimeStampedModel):
@@ -102,9 +105,10 @@ class SaleGuide(TimeStampedModel):
 class OrderGroup(TimeStampedModel):
 	reference = models.CharField(max_length=128)
 	closed = models.BooleanField(default=False)
+	customer = models.CharField(max_length=256, null=True)
 	waiter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='waiter')
 	cashier = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='cashier')
-	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=PAID)
+	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=PENDING)
 
 	def __str__(self):
 		return self.reference
@@ -121,7 +125,6 @@ class Order(TimeStampedModel):
 	purchase_metric = models.CharField(max_length=128)
 	sale_price = models.IntegerField()
 	sale_metric = models.CharField(max_length=128)
-	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=PENDING)
 
 	order_group = models.ForeignKey(OrderGroup, on_delete=models.CASCADE)
 	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)

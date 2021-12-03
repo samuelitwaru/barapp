@@ -49,22 +49,21 @@
             }
         },
         created: function() {
-            // this.getOrders()
             this.getOrderGroups()
             this.showLoading=false
             setInterval(this.updateTimeNow, 30000)
         },
         computed: {
             pending(){
-                this[0] = this.orderGroups.filter(orderGroup=>orderGroup.orders[0].status==0)
+                this[0] = this.orderGroups.filter(orderGroup=>orderGroup.status==0)
                 return this[0]
             },
             ready(){
-                this[1] = this.orderGroups.filter(orderGroup=>orderGroup.orders[0].status==1)
+                this[1] = this.orderGroups.filter(orderGroup=>orderGroup.status==1)
                 return this[1]
             },
             served(){
-                this[2] = this.orderGroups.filter(orderGroup=>orderGroup.orders[0].status==2)
+                this[2] = this.orderGroups.filter(orderGroup=>orderGroup.status==2)
                 return this[2]
             },
         },
@@ -80,7 +79,6 @@
                 .then(r => r.json())
                 .then(data => {
                     this.orderGroups = data.results
-
                 })
             },
             getOrders(){
@@ -103,7 +101,7 @@
             showOrderGroup(orderGroup){
                 this.orderGroup = orderGroup
                 this.currentOrders = orderGroup.orders
-                this.currentStatus = orderGroup.orders[0].status
+                this.currentStatus = orderGroup.status
                 this.currentRef = orderGroup.reference
                 this.showOrder = true
             },

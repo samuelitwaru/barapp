@@ -24,19 +24,19 @@ def get_notifications(request):
 
 	res = [
 		{
-			"message": f"{len(low_stock_products)} Products have low stock!",
+			"message": f"{len(low_stock_products)} Product(s) with low stock!",
 			"items": low_stock_products,
 			"url": reverse("bar:get_products")
 		}, 
 		{
-			"message": "Pending Orders",
+			"message": f"{len(pending_orders)} Pending Orders",
 			"items":pending_orders,
 			"url": reverse("bar:orders")
 		}, 
 		{
-			"message": "Pending Orders",
+			"message": f"{len(ready_orders)} Ready Orders",
 			"items":ready_orders,
-			"url": reverse("bar:orders")
+			"url": reverse("bar:orders")+"?status=1"
 		}, 
 	]
 	return JsonResponse(res, safe=False)

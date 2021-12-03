@@ -20,7 +20,7 @@ window.onload = function windowLoad(event) {
 			if (itemCount){
 				el = `
 				<li>
-					<a class="dropdown-item d-flex justify-content-around text-wrap" href="${notification.url}">
+					<a class="dropdown-item d-flex justify-content-between text-wrap" href="${notification.url}">
 					${notification.message}
 					<span class="badge bg-danger p-1 mx-2 my-auto">${itemCount}</span>
 					</a>

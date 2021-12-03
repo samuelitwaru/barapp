@@ -15,7 +15,7 @@ class ProductsPageView(TemplateView):
 		context['products'] = Product.objects.all()
 		low_stock_products = Product.objects.filter(quantity__lte=F("stock_limit")).all()
 		if low_stock_products:
-			messages.error(self.request, f"{len(low_stock_products)} Product(s) have low stock!", extra_tags="danger")
+			messages.error(self.request, f"{len(low_stock_products)} Product(s) with low stock!", extra_tags="danger")
 		context['categories'] = Category.objects.all()
 		return context
 
@@ -67,14 +67,8 @@ def get_product(request, id):
 		"purchase_price": product.purchase_price,
 	}, product=product)
 
-	quantity_in_default_sale_guide_metric = 0
-	default_sale_guide = product.sale_guides.first()
-	if default_sale_guide:
-		quantity_in_default_sale_guide_metric = product.metric_system.convert(product.quantity, product.purchase_metric, default_sale_guide.metric)
 	context = {
 		"object": product,
-		"default_sale_guide": default_sale_guide,
-		"quantity_in_default_sale_guide_metric": quantity_in_default_sale_guide_metric,
 		"update_product_form": update_product_form,
 		"update_product_categories_form": update_product_categories_form,
 		"update_product_purchasing_form": update_product_purchasing_form,

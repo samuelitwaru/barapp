@@ -11,8 +11,27 @@ from ..utils import STATUS_CHOICES
 
 @login_required
 def get_order_groups(request):
-    filter_order_groups_form = FilterOrderGroupsForm()
-    order_groups = OrderGroup.objects.order_by("-created_at").all()
+    # date_lte = request.GET.get("date_lte")
+    # date_gte = request.GET.get("date_gte")
+    query = OrderGroup.objects
+    
+    filter_order_groups_form = FilterOrderGroupsForm(data=request.GET)
+    if filter_order_groups_form.is_valid():
+        data = filter_order_groups_form.cleaned_data
+        date_lte = data.get("date_lte")
+        date_gte = data.get("date_gte")
+        status = data.get("status")
+        if date_lte:
+            query = query.filter(created_at__lte=date_lte)
+        if date_gte:
+            query = query.filter(created_at__gte=date_gte)
+        print(">>>>>>>>", status)
+        if isinstance(status, bool):
+            print("dooooooooo", status)
+            query = query.filter(closed=status)
+
+
+    order_groups = query.order_by("-created_at").all()
     context = {
         "order_groups": order_groups,
         "filter_order_groups_form": filter_order_groups_form

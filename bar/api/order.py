@@ -24,9 +24,10 @@ class OrderViewSet(viewsets.ModelViewSet):
 	@action(detail=False, methods=['post'])
 	@transaction.atomic
 	def create_orders(self, request):
-		orders = request.data
+		orders = request.data.get("orders")
+		customer = request.data.get("customer")
 		ref = generate_order_ref()
-		order_group = OrderGroup(reference=ref, waiter_id=request.user.id)
+		order_group = OrderGroup(reference=ref, waiter_id=request.user.id, customer=customer)
 		order_group.save()
 		for product in orders:
 			sale_guide = SaleGuide.objects.get(id=product.get("orderSaleGuide").get("id"))
@@ -119,13 +120,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 	def update_order_status(self, request):
 		ref = request.data.get("ref")
 		status = request.data.get("status")
-		if ref and status:
-			orders = Order.objects.filter(reference=ref)
-			orders.update(reference=ref, status=status)
-			response = {
-				"status": "success",
-				"detail": "Action successful."
-			}
+		order_group = OrderGroup.objects.get(reference=ref)
+		if order_group and status:
+			order_group.update(status=status)
 		else:
 			response = {
 				"status": "failure",

@@ -18,7 +18,6 @@
 						<th>Quantity</th>
 						<th>Price</th>
 						<th>Total</th>
-						<th>Status</th>
 					</thead>
 					<tr v-for="product in currentOrders">
 						<td>
@@ -35,19 +34,27 @@
 						<td>
 							UGX {%verbatim%}{{product.sale_price*product.quantity}}{%endverbatim%}
 						</td>
-
-						<td>
-							{%verbatim%}{{STATUSES[product.status]}}{%endverbatim%}
-						</td>
 					</tr>
 					<tr>
 						<td colspan="3">
 							Total
 						</td>
-						<td colspan="2">
+						<td>
 							UGX {%verbatim%}{{totalPrice()}}{%endverbatim%}
 						</td>
 					</tr>
+				</table>
+				<table class="table table-bordere">
+					<tbody>
+						<tr>
+							<td>Waiter</td>
+							<td>{%verbatim%}{{orderGroup.waiter}}{%endverbatim%}</td>
+						</tr>
+						<tr>
+							<td>Customer</td>
+							<td>{%verbatim%}{{orderGroup.customer}}{%endverbatim%}</td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 
