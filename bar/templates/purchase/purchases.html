@@ -30,6 +30,11 @@
             </form>
         </div>
 
+        <div class="px-2 d-flex flex-row-reverse">
+            <div class="mx-1"><label>Total Amount</label> <strong>{{total|intcomma}}</strong></div> |
+            <div class="mx-1"><label>Fetched</label> <strong>{{purchases.count}}</strong></div>
+        </div>
+
         <div class="overflow-auto">
             <table class="table table-bordered table-hover">
             	<thead>
@@ -45,7 +50,7 @@
             		<tr>
                         <td>{{purchase.product_name}}</a></td>
             			<td>{{purchase.created_at}}</td>
-            			<td>{{purchase.quantity}}</td>
+            			<td align="right">{{purchase.quantity}}</td>
             			<td>{{purchase.purchase_price}} @ ({{purchase.purchase_metric}})</td>
             			<td>{{purchase.quantity|multiply:purchase.purchase_price|intcomma}}</td>
             		</tr>

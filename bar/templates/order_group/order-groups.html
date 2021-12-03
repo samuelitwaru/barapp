@@ -30,6 +30,12 @@
             </form>
         </div>
 
+        <div class="px-2 d-flex flex-row-reverse">
+            <div class="mx-1"><label>Total Amount</label> <strong>{{total|intcomma}}</strong></div> |
+            <div class="mx-1"><label>Fetched</label> <strong>{{order_groups.count}}</strong></div>
+        </div>
+
+
 
         <div class="overflow-auto">
             <table class="table table-bordered table-hover">

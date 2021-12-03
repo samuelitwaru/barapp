@@ -16,14 +16,15 @@
 			
 			<ul class="d-flex nav nav-pills p-2 justify-content-center" id="pills-tab" role="tablist">
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="pills-waiter-tab" data-bs-toggle="pill" data-bs-target="#pills-waiter" type="button" role="tab" aria-controls="pills-waiter" aria-selected="false">Waiter</button>
+					<button class="nav-link active" id="pills-waiter-tab" data-bs-toggle="pill" data-bs-target="#pills-waiter" type="button" role="tab" aria-controls="pills-waiter" aria-selected="false">Waiter</button>
 				</li>
 				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab" aria-controls="pills-login" aria-selected="true">Login</button>
+					<button class="nav-link" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab" aria-controls="pills-login" aria-selected="true">Login</button>
 				</li>
 			</ul>
+			{% include 'index/alert.html' %}
 			<div class="tab-content" id="pills-tabContent">
-				<div class="tab-pane fade p-2" id="pills-waiter" role="tabpanel" aria-labelledby="pills-waiter-tab"  align="left">
+				<div class="tab-pane fade show active p-2" id="pills-waiter" role="tabpanel" aria-labelledby="pills-waiter-tab"  align="left">
 					<ul class="list-group">
 						{% for waiter in waiters %}
 							<a class="nav-link" href="{% url 'bar:login_waiter' id=waiter.id %}">
@@ -37,9 +38,7 @@
 						{% endfor %}
 					</ul>
 				</div>
-				<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
-					{% include 'index/alert.html' %}
-			
+				<div class="tab-pane fade show" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
 					<form class="m-0" method="POST" action="" align="left">
 						{% csrf_token %}
 						
