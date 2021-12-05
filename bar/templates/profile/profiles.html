@@ -8,7 +8,7 @@
         {% include 'index/alert.html' %}
     </div>
 
-    <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
+    <div class="d-flex bg-light p-2 justify-content-between">
         <h3 class="my-auto">Users</h3>
         <a href="{% url 'bar:create_user' %}" class="btn btn-primary">Create User</a>
     </div>
@@ -17,8 +17,9 @@
         <table class="table table-bordered table-hover">
         	<thead>
         		<th>Name</th>
-        		<th>Contact</th>
                 <th>Group</th>
+                <th>Email</th>
+        		<th>Telephone</th>
         		<th></th>
         	</thead>
 
@@ -26,11 +27,11 @@
         		{% for profile in profiles %}
         		<tr>
                     <td><a href="{% url 'bar:get_profile' id=profile.id %}" class="nav-link p-0">{{profile.name}}</a></td>
+                    <td>{{profile.roles}}</td>
         			<td>
                         {{profile.email}}<br>
-                        <small>{{profile.telephone}}</small>
                     </td>
-                    <td>{{profile.roles}}</td>
+                    <td>{{profile.telephone}}</td>
         			<td><a href="{% url 'bar:get_profile' id=profile.id %}" class="btn btn-primary btn-sm">View</a></td>
         		</tr>
         		{% endfor %}

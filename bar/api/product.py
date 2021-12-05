@@ -26,8 +26,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 	@action(detail=True, methods=['put'])
 	@transaction.atomic
 	def update_stock_limit(self, request, pk):
-		stock_limit = request.data.get("stock_limit")		
+		stock_limit = int(request.data.get("stock_limit"))		
 		product = Product.objects.get(id=pk)
-		product.stock_limit = stock_limit
+		stock_limit_in_purchase_metric = product.metric_system.convert(stock_limit, product.default_sale_guide_metric(), product.purchase_metric)
+		product.stock_limit = stock_limit_in_purchase_metric
 		product.save()
 		return JsonResponse(ProductSerializer(product).data)

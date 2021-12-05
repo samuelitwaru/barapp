@@ -23,10 +23,7 @@
                     {% render_field filter_order_groups_form.status %}
                 </div>
 
-                <div class="my-auto">
-                    <label>&nbsp;</label>
-                    <button class="mb-0 my-auto" type="submit">Filter</button>
-                </div>
+                <div align="right" class="p-2"><label>&nbsp;</label><input type="submit" value="Filter" class="d-block" /></div>
             </form>
         </div>
 
@@ -61,6 +58,14 @@
             		{% endfor %}
             	</tbody>
             </table>
+        </div>
+ 
+        <div v-show="!showPrint">
+            {% with objects=order_groups %}
+                {% if objects.has_other_pages %}
+                    {% include 'index/paginator.html' %}
+                {% endif %}
+            {% endwith %}
         </div>
     </div>
 

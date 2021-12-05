@@ -16,15 +16,29 @@
 
     {% include 'category/categories.html' %}
 
+    <div v-show="!showPrint" class="border-top">
+        <form class="d-flex m-0">
+            <div class="d-flex overflow-auto">
+                {% render_field filter_products_form.category %}
+                {% render_field filter_products_form.metric_system %}
+            </div>
+
+            <div class="my-auto">
+                <label>&nbsp;</label>
+                <button class="mb-0 my-auto" type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+
     <div class="overflow-auto">
         <table class="table table-bordered table-hover">
         	<thead>
         		<th>Name</th>
         		<th>Brand</th>
                 <th>Stock</th>
-        		<th>Stock Limit</th>
                 <th>Purchase Metric</th>
         		<th>Purchase Price</th>
+        		<th>Stock Limit</th>
         		<th>Stock Value</th>
         		<th>Barcode</th>
         		<th>Metric System</th>
@@ -40,9 +54,9 @@
                         <span class="{%if product.quantity <= product.stock_limit %}text-danger{%endif%}">{{product.quantity|floatformat:2}}</span>
                         <a href="{% url 'bar:add_product_stock' id=product.id %}" class="btn btn-success btn-sm">+ Stock</a>
                     </td>
-                    <td>{{product.stock_limit}}</td>
                     <td>{{product.purchase_metric}}</td>
         			<td align="right">{{product.purchase_price|intcomma}}</td>
+                    <td align="right">({{product.default_sale_guide_metric}}) {{product.stock_limit}}</td>
         			<td align="right">{{product.stock_value|floatformat:2|intcomma}}</td>
         			<td align="right">{{product.barcode}}</td>
         			<td>{{product.metric_system}}</td>
@@ -54,6 +68,12 @@
         	</tbody>
         </table>
     </div>
+
+    {% with objects=products %}
+        {% if objects.has_other_pages %}
+            {% include 'index/paginator.html' %}
+        {% endif %}
+    {% endwith %}
 
 
 {% endblock %}

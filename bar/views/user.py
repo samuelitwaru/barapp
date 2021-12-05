@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from ..models import User, Profile
-from ..forms import UpdateUserPermissionsForm, UpdateUserForm, CreateUserForm, UpdateUserPasswordForm
+from ..forms import UpdateUserPermissionsForm, UpdateUserForm, UpdateWaiterForm, CreateUserForm, UpdateUserPasswordForm
 
 
 # class UsersPageView(TemplateView):
@@ -28,6 +28,7 @@ from ..forms import UpdateUserPermissionsForm, UpdateUserForm, CreateUserForm, U
 def create_user(request):
 	create_user_form = CreateUserForm()
 	if request.method=="POST":
+		print("???????????????????/", request.POST)
 		create_user_form = CreateUserForm(request.POST)
 		if create_user_form.is_valid():
 			data = create_user_form.cleaned_data
@@ -53,21 +54,25 @@ def create_user(request):
 def update_user(request, id):
 	user = User.objects.filter(id=id).first()
 	profile = user.profile
-
-	update_user_form = UpdateUserForm(data=request.POST, profile=profile)
+	if "Waiter" in profile.roles():
+		update_user_form = UpdateWaiterForm(data=request.POST, profile=profile)
+	else:
+		update_user_form = UpdateUserForm(data=request.POST, profile=profile)
 	if request.method == "POST" and update_user_form.is_valid():
 		data = update_user_form.cleaned_data
-		group = Group.objects.get(id=data['user_group'])
+		# group = Group.objects.get(id=data['user_group'])
 		profile.name = data["name"]
-		profile.email = data["email"]
+		if not user.groups.filter(name="Waiter"):
+			profile.email = data["email"]
+			user.email = data["email"]
+			user.username = data["email"]
+		
 		profile.telephone = data["telephone"]
-		user.email = data["email"]
-		user.username = data["email"]
 		user.is_active = data["is_active"]
-		user.groups.set([group])
 		profile.save()
 		user.save()
 		messages.success(request, f"User updated.")
+	print(">>>>>>>>>>>>>", update_user_form.errors)
 	return redirect('bar:get_profile', id=profile.id)
 	
 

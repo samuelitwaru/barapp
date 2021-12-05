@@ -72,7 +72,24 @@ class Product(TimeStampedModel):
 		self.save()
 
 	def default_sale_guide(self):
-		pass
+		return self.sale_guides.first()
+
+	def default_sale_guide_metric(self):
+		default_sale_guide = self.default_sale_guide()
+		if default_sale_guide:
+			return default_sale_guide.metric
+
+	def quantity_in_default_sale_guide_metric(self):
+		default_sale_guide_metric = self.default_sale_guide_metric()
+		purchase_metric = self.purchase_metric
+		if default_sale_guide_metric and purchase_metric:
+			return self.metric_system.convert(self.quantity, purchase_metric, default_sale_guide_metric)
+
+	def stock_limit_in_default_sale_guide_metric(self):
+		default_sale_guide_metric = self.default_sale_guide_metric()
+		purchase_metric = self.purchase_metric
+		if default_sale_guide_metric and purchase_metric:
+			return self.metric_system.convert(self.stock_limit, purchase_metric, default_sale_guide_metric)
 
 
 class Category(TimeStampedModel):
@@ -155,7 +172,7 @@ class Purchase(TimeStampedModel):
 class Profile(models.Model):
     name = models.CharField(max_length=256)
     email = models.EmailField()
-    telephone = models.CharField(max_length=16)
+    telephone = models.CharField(max_length=16, null=True)
     user = models.OneToOneField(User, unique=False, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -163,3 +180,12 @@ class Profile(models.Model):
 
     def roles(self):
     	return ', '.join([group.name for group in self.user.groups.all()])
+
+
+
+def get_user_profile(self):
+	if getattr(self, "profile", None):
+		return self.profile.name
+	return self
+
+User.add_to_class("__str__", get_user_profile)

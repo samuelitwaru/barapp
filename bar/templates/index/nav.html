@@ -10,7 +10,6 @@
 
             <a href="{% url 'bar:create_orders' %}" class="btn btn-primary f-10"><strong>+</strong></span></a>
             <a href="{% url 'bar:orders' %}" class="btn btn-primary"><span class="fa fa-bell-o fa-2x"></span></a>
-            <a href="{% url 'bar:get_current_user_profile' %}" class="btn btn-primary"><span class="fa fa-user-o fa-2x"></span></a>
             <button id="navButton" class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -43,12 +42,14 @@
                 </div>
             </a>
             
+            {% if not user|has_group:"Waiter" %}
             <a href="{% url 'bar:get_current_user_profile' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
                     <img src="{% static 'img/user.png' %}" style="height: 5rem; width: 5rem"/>
                     Your Account
                 </div>
             </a>
+            {% endif %}
 
             <a href="{% url 'bar:logout' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
@@ -59,15 +60,15 @@
         </div>
 
 
-        {% if user|has_group:"Admin" %}
+        {% if not user|has_group:"Waiter" %}
         <hr>
         <div class="d-flex flex-wrap justify-content-around">
 
 
-            <a href="{% url 'bar:get_order_groups' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
+            <a href="{% url 'bar:get_order_sales' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
                     <img src="{% static 'img/all-orders.jpeg' %}" style="height: 5rem; width: 5rem"/>
-                    All Orders
+                    Sales
                 </div>
             </a>
 
@@ -93,13 +94,14 @@
             </a>
 
 
-
+            {% if not user|has_group:"Cashier" %}
             <a href="{% url 'bar:get_profiles' %}" class="m-2 nav-link border border-primary border-2 p-3 rounded hover-scale">
                 <div align="center" class="text-center" style="height: 5.5rem; width: 5.5rem" class="card">
                     <img src="{% static 'img/users.png' %}" style="height: 5rem; width: 5rem"/>
                     Users
                 </div>
             </a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

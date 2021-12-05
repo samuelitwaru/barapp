@@ -2,14 +2,24 @@ window.onload = function windowLoad(event) {
 	var notifications = null
 
 	function fetchNotifications(){
-		fetch("/notifications")
+		fetch("/notifications/count")
         .then(r => r.json())
         .then(data => {
-        	notifications = data
-        	$("#notifications").html(renderNotifications(notifications))
+        	count = data.count
+        	$("#notifications").html(renderNotificationCount(count))
         })
 	}
 // s,dks
+	function renderNotificationCount(count){
+		if (count != 0){
+			return `
+					<a href="/notifications" class="btn btn-sm btn-danger border-2 border-light rounded-circle">
+			            ${count}
+			        </a>
+			        `
+		}
+		return ''
+	}
 	function renderNotifications(notifications){
 		count = 0
 		list = ""

@@ -26,23 +26,30 @@
 
                         <div class="px-1 my-auto">
                             <label>Stock Limit:</label>
+                            {% with default_sale_guide=object.default_sale_guide %}
+                            {% if default_sale_guide %}
                             <strong>
-                                <input type="number" min="0" name="stockLimit" v-model="stockLimit" style="max-width: 50;" @change="updateProductStockLimit()"> ({{object.purchase_metric}})
+                                <input type="number" min="0" name="stockLimit" v-model="stockLimit" style="max-width: 50;" @change="updateProductStockLimit()"> ({{default_sale_guide.metric}})
                             </strong>
+                            {% else %}
+                                <small class="text-danger">Add sale guides to view stock limit</small>
+                            {% endif %}
+                            {% endwith %}
                         </div>
 
-                        {% with stock_value=object.stock_value %}
-                            {% if stock_value %}
-                                <div class="px-1 my-auto">
-                                    <label>Stock Value:</label>
+                        <div class="px-1 my-auto">
+                            {% with stock_value=object.stock_value %}
+                                <label>Stock Value:</label>
+                                {% if stock_value != None %}
                                     <strong>
                                         {{stock_value|floatformat:0|intcomma}}
                                     </strong>
-                                </div>
-                            {% else %}
-                                <small class="text-danger">Add sale guides to view Stock Value!</small>
-                            {% endif %}
-                        {% endwith %}
+                                {% else %}
+                                    {{object.stock_value}}
+                                    <small class="text-danger">Add sale guides to view Stock Value!</small>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
                     </div>
                     <a href="{% url 'bar:add_product_stock' id=object.id %}" class="btn btn-success btn-sm my-auto">+ Stock</a>
                 </div>
@@ -144,7 +151,7 @@
             metric: '',
             price: '',
             showLoading: true,
-            stockLimit: parseInt("{{object.stock_limit}}")
+            stockLimit: parseInt("{{object.stock_limit_in_default_sale_guide_metric}}")
         },
         created: function() {
         	this.getProduct()

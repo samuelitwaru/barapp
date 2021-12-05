@@ -1,7 +1,36 @@
 
 <div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Orders</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="p-2">
+            <small>From</small> 
+            <!-- <input type="date" class="form-control" name="date"> -->
+            {{filter_order_groups_form.date_gte}}
+        </div>
+        <div class="p-2">
+            <small>To</small> 
+            <!-- <input type="date" class="form-control" name="date"> -->
+            {{filter_order_groups_form.date_lte}}
+        </div>
+        <div class="p-2">
+            <small>Status</small>
+            {{filter_order_groups_form.status}} 
+        </div>            
+        <div class="p-2">
+            <small>Waiter</small> 
+            {{filter_order_groups_form.waiter}} 
+            <!-- <select class="form-control"></select></div> -->
+        </div>
+        <div align="right" class="p-2"><small>&nbsp;</small><input type="submit" value="Filter" class="d-block" @click="filterOrders()" /></div>
+    </div>
+  </div>
+</nav>
     <ul class="border sticky-top bg-light justify-content-between nav nav-pills p-2" id="pills-tab" role="tablist" align="center">
-        <h3 class="my-auto">Orders</h3>
         <li class="nav-item" role="presentation">
             <button class="nav-link {% if status == 0 %}active{% endif %}" id="pills-pending-tab" data-bs-toggle="pill" data-bs-target="#pills-pending" type="button" role="tab" aria-controls="pills-pending" aria-selected="true">PENDING</button>
         </li>

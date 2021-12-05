@@ -31,6 +31,7 @@ urlpatterns = [
 	path('orders/create', create_orders, name='create_orders'),
 	path('orders/update/<int:order_group_id>', update_orders, name='update_orders'),
 	path('orders/update/status', update_order_status, name='update_order_status'),
+	path('orders/sales', get_order_sales, name='get_order_sales'),
 	
 	path('order-groups', get_order_groups, name='get_order_groups'),
 	path('order-groups/<int:id>', get_order_group, name='get_order_group'),
@@ -54,7 +55,7 @@ urlpatterns = [
 	path('metric-systems', MetricSystemsPageView.as_view(), name='get_metric_systems'),
 	path('metric-systems/create', create_metric_system, name='create_metric_system'),
 
-	path('products', ProductsPageView.as_view(), name='get_products'),
+	path('products', get_products, name='get_products'),
 	path('products/create', create_product, name='create_product'),
 	# path('products/<pk>/', ProductDetailView.as_view(), name='get_product'),
 	path('products/<int:id>/', get_product, name='get_product'),
@@ -66,5 +67,6 @@ urlpatterns = [
 	path('categories/<int:id>/', get_category, name='get_category'),
 
 	path('notifications', get_notifications, name='get_notifications'),
+	path('notifications/count', get_notification_count, name='get_notification_count'),
 
 ]

@@ -21,7 +21,9 @@ def join_telephone(code, telephone, joiner="-"):
 	return f"{code}{joiner}{telephone}"
 
 def split_telephone(telephone, splitter="-"):
-	return telephone.split(splitter)
+	if telephone:
+		return telephone.split(splitter)
+	return ['','']
 
 
 def create_purchase_from_stock():

@@ -19,9 +19,10 @@
 		        	<form method="POST" class="border" action="{% url 'bar:update_user' id=profile.user_id %}" align="left">
 						{% csrf_token %}
 						{% render_field update_user_form.name %}
-						{% render_field update_user_form.email %}
+						{% if not profile.user|has_group:"Waiter" %}
+							{% render_field update_user_form.email %}
+						{% endif %}
 						{% render_field update_user_form.telephone tel_code=update_user_form.tel_code %}
-						{% render_field update_user_form.user_group %}
 						{% render_field update_user_form.is_active %}
 						<div class="p-2" align="right">
 							<button class="btn btn-primary">Update User Profile</button>

@@ -19,10 +19,16 @@
                     <form class="bg-light border border-left" method="POST">
                         {% csrf_token %}
                         {% render_field create_user_form.name %}
-                        {% render_field create_user_form.email %}
-                        {% render_field create_user_form.telephone tel_code=create_user_form.tel_code %}
                         {% render_field create_user_form.user_group %}
-                        <div v-show="userGroup!=3">
+                        {% render_field create_user_form.telephone tel_code=create_user_form.tel_code %}
+                        <div v-if="userGroup!=3">
+                            <div class="form-group p-2">
+                                <label>Email <span v-show="userGroup!=3" class="text-danger">*</span></label> 
+                                <input type="email" name="email" id="id_email" class="form-control" :required="userGroup!=3">
+                                <small class="text-danger">
+                                    {{create_user_form.email.errors}}
+                                </small>
+                            </div>
                             {% render_field create_user_form.password  %}
                             {% render_field create_user_form.confirm_password %}
                         </div>

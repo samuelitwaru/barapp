@@ -6,3 +6,4 @@ from .purchase import *
 from .user import *
 from .category import *
 from .order_group import *
+from .order import *

@@ -46,6 +46,10 @@
                 timeNow: new Date(),
                 showPrint: false,
                 showOrder: false,
+                dateGte: '',
+                dateLte: '',
+                waiter: 0,
+                status: 0,
             }
         },
         created: function() {
@@ -186,6 +190,26 @@
 
             goBack(){
                 this.showOrder = false
+            },
+
+            filterOrders(){
+                data = {
+                    date_gte: this.dateGte,
+                    date_lte: this.dateLte,
+                    waiter: this.waiter,
+                    status: this.status,
+                }
+                queryString = Object.keys(data)
+                .map(key => `${key}=${data[key]}`)
+                .join('&')
+
+                this.showLoading = true
+                fetch(`/api/order-groups/?${queryString}`)
+                .then(r => r.json())
+                .then(data => {
+                    this.orderGroups = data.results
+                    this.showLoading = false
+                })
             }
         }
     })

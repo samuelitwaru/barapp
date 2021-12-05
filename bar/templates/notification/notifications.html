@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load app_tags %}
+
+
+{% block body %}
+	<div id="app">
+        {% include 'index/nav.html' %}
+
+		<div class="d-flex bg-light p-2 justify-content-between">
+	        <h3 class="my-auto">Notifications</h3>
+	        <label class="btn btn-sm btn-danger border-2 border-light rounded-circle">{{count}}</label>
+	    </div>
+
+		<div>
+			{% for notification in notifications %}
+			<div class="card card-{{notification.tag}}">
+				<div class="d-flex card-body justify-content-between">
+					<div>
+						<h5 class="card-title font-weight-bold">{{notification.title}}</h5>
+						<p class="card-text text-{{notification.tag}}">{{notification.description}}</p>
+					</div>
+					<a href="{{notification.url}}" class="btn btn-primary my-auto">Go there</a>
+				</div>
+			</div>
+			{% empty %}
+			<div class="border-top">
+				<p class="text-muted text-center my-5">No notifications</p>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

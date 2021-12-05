@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import F
 from django.views.generic import TemplateView, DetailView
-from ..models import Product, Category, Purchase
-from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm, AddProductStockForm
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from ..models import Product, Category, Product
+from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm, AddProductStockForm, FilterProductsForm
+from ..decorators import *
 
 
 class ProductsPageView(TemplateView):
@@ -18,6 +21,33 @@ class ProductsPageView(TemplateView):
 			messages.error(self.request, f"{len(low_stock_products)} Product(s) with low stock!", extra_tags="danger")
 		context['categories'] = Category.objects.all()
 		return context
+
+
+@groups_required("Admin")
+@login_required
+def get_products(request):
+	query = Product.objects
+	filter_products_form = FilterProductsForm(data=request.GET)
+	if filter_products_form.is_valid():
+		data = filter_products_form.cleaned_data
+		metric_system = data.get("metric_system")
+		category = data.get("category")
+		if metric_system:
+			query = query.filter(metric_system_id=metric_system)
+		if category:
+			query = query.filter(categories__id=category)
+	
+	categories = Category.objects.all()
+	products = query.all()
+	page = int(request.GET.get("page", 1))
+	p = Paginator(products, 50)
+	products = p.get_page(page)
+	context = {
+		"products": products,
+		"categories": categories,
+		"filter_products_form": filter_products_form
+	}
+	return render(request, 'product/products.html', context)
 
 
 def create_product(request):
@@ -144,9 +174,9 @@ def add_product_stock(request, id):
 			product.purchase_price = new_purchase_price
 			product.quantity += quantity
 			product.save()
-			Purchase.objects.create(product_name=product.name, purchase_price=new_purchase_price, 
-				purchase_metric=new_purchase_metric.unit, quantity=quantity, product_id=product.id
-				)
+			# Product.objects.create(product_name=product.name, purchase_price=new_purchase_price, 
+			# 	purchase_metric=new_purchase_metric.unit, quantity=quantity, product_id=product.id
+			# 	)
 			messages.success(request, "Product stock added")
 			return redirect('bar:get_product', id=product.id)
 

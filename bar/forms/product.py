@@ -76,15 +76,12 @@ class AddProductStockForm(UpdateProductPurchasingForm):
 
 
 class FilterProductsForm(forms.Form):
-	date_gte = forms.DateField(label="From", required=False, widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type':"date"}))
-	date_lte = forms.DateField(label="To", required=False, widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type':"date"}))
-	status = forms.BooleanField(label="Status", required=False,  widget=forms.Select(choices=[(0, 'ANY'), (1, 'OPEN'), (2, 'CLOSED')]))
-	metric_system = forms.IntegerField(label="Metric system", required=False,  widget=forms.Select)
+	metric_system = forms.IntegerField(label="Metric system", required=False,  widget=forms.Select(choices=[(0, 'ANY')]))
 	category = forms.IntegerField(label="Category", required=False,  widget=forms.Select(choices=[(0, 'ANY')]))
 
 	
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.fields["metic_system"].widget.choices = [(metric_system.id, metric_system.name) for metric_system in MetricSystem.objects.all()]
+		self.fields["metric_system"].widget.choices += [(metric_system.id, metric_system.name) for metric_system in MetricSystem.objects.all()]
 		self.fields["category"].widget.choices += [(category.id, category.name) for category in Category.objects.all()]
 
