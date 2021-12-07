@@ -12,7 +12,7 @@
 
         <div class="d-flex bg-light p-2 justify-content-between">
 	        <h3 class="my-auto">Purchases</h3>
-            <button v-show="!showPrint" @click="printPage"><span class="fa fa-print"></span> Print</button>
+            <button class="btn btn-dark btn-sm" v-show="!showPrint" @click="printPage"><span class="fa fa-print"></span> Print</button>
 	    </div>
         
         <div v-show="!showPrint" class="border-top">

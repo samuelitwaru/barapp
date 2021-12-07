@@ -1,4 +1,4 @@
-
+{% load app_tags %}
 <div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
@@ -8,23 +8,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="p-2">
-            <small>From</small> 
-            <!-- <input type="date" class="form-control" name="date"> -->
-            {{filter_order_groups_form.date_gte}}
+            {% render_field filter_orders_form.date_gte %}
         </div>
         <div class="p-2">
-            <small>To</small> 
-            <!-- <input type="date" class="form-control" name="date"> -->
-            {{filter_order_groups_form.date_lte}}
+            {% render_field filter_orders_form.date_lte %}
         </div>
         <div class="p-2">
-            <small>Status</small>
-            {{filter_order_groups_form.status}} 
+            {% render_field filter_orders_form.status %}
         </div>            
         <div class="p-2">
-            <small>Waiter</small> 
-            {{filter_order_groups_form.waiter}} 
-            <!-- <select class="form-control"></select></div> -->
+            {% render_field filter_orders_form.waiter %} 
         </div>
         <div align="right" class="p-2"><small>&nbsp;</small><input type="submit" value="Filter" class="d-block" @click="filterOrders()" /></div>
     </div>

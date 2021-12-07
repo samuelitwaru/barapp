@@ -23,7 +23,7 @@ class ProductsPageView(TemplateView):
 		return context
 
 
-@groups_required("Admin")
+@groups_required("Admin", "Cashier")
 @login_required
 def get_products(request):
 	query = Product.objects
@@ -49,7 +49,8 @@ def get_products(request):
 	}
 	return render(request, 'product/products.html', context)
 
-
+@groups_required("Admin", "Cashier")
+@login_required
 def create_product(request):
 	create_product_form = CreateProductForm()
 	if request.method=="POST":
@@ -66,6 +67,8 @@ def create_product(request):
 	return render(request, 'product/create-product.html', context)
 
 
+@groups_required("Admin", "Cashier")
+@login_required
 def get_product(request, id):
 	product = Product.objects.filter(id=id).first()
 	categories = Category.objects.all()
@@ -107,6 +110,8 @@ def get_product(request, id):
 	return render(request, 'product/product.html', context)
 
 
+@groups_required("Admin", "Cashier")
+@login_required
 def update_product_purchasing(request, id):
 	product = Product.objects.filter(id=id).first()
 	update_product_purchasing_form = UpdateProductPurchasingForm(data=request.POST, product=product)
@@ -141,6 +146,8 @@ def update_product_purchasing(request, id):
 	return render(request, 'product/product.html', context)
 
 
+@groups_required("Admin", "Cashier")
+@login_required
 def update_product_categories(request, id):
 	product = Product.objects.filter(id=id).first()
 	update_product_categories_form = UpdateProductCategoriesForm(data=request.POST)
@@ -152,6 +159,8 @@ def update_product_categories(request, id):
 	return redirect('bar:get_product', id=product.id)
 
 
+@groups_required("Admin", "Cashier")
+@login_required
 def add_product_stock(request, id):
 	product = Product.objects.filter(id=id).first()
 	add_product_stock_form = AddProductStockForm(data={

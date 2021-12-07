@@ -42,10 +42,6 @@ def get_category(request, id):
 
 def delete_category(request, id):
 	category = Category.objects.get(id=id)
-	delete_category_form = DeleteCategoryForm()
-	if request.method=="POST":
-		create_category_form = DeleteCategoryForm(request.POST)
-		if create_category_form.is_valid():
-			category.delete()
-			messages.success(request, "Category deleted")
+	category.delete()
+	messages.success(request, "Category deleted")
 	return redirect('bar:get_products')

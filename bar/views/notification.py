@@ -28,19 +28,18 @@ def get_notifications(request):
 	ready_orders = OrderGroup.objects.filter(status=1).all()
 	notifications = []
 	for order_group in pending_orders:
-		notification = Notification("Pending Order", f"The {order_group} is pending", reverse("bar:orders"))
+		notification = Notification("Pending Order", f"The order '{order_group}' is pending", reverse("bar:orders"))
 		notifications.append(notification)
 
 	for order_group in ready_orders:
-		notification = Notification("Ready Order", f"The {order_group} is ready", reverse("bar:orders")+"?status=1")
+		notification = Notification("Ready Order", f"The order '{order_group}' is ready", reverse("bar:orders")+"?status=1")
 		notifications.append(notification)
 	for product in low_stock_products:
-		notification = Notification("Low Stock", f"The {product} has low stock", f"/products/{product.id}", tag="danger")
+		notification = Notification("Low Stock", f"The product '{product}' has low stock", f"/products/{product.id}", tag="danger")
 		notifications.append(notification)
 
 	context = {
 		"notifications": notifications,
-		"count": len(notifications)
 	}
 	return render(request, 'notification/notifications.html', context)
 

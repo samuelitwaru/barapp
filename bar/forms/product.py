@@ -76,8 +76,8 @@ class AddProductStockForm(UpdateProductPurchasingForm):
 
 
 class FilterProductsForm(forms.Form):
-	metric_system = forms.IntegerField(label="Metric system", required=False,  widget=forms.Select(choices=[(0, 'ANY')]))
-	category = forms.IntegerField(label="Category", required=False,  widget=forms.Select(choices=[(0, 'ANY')]))
+	metric_system = forms.IntegerField(label="Metric system", required=False,  widget=forms.Select(choices=[(0, 'ANY')], attrs={"class":"form-control"}))
+	category = forms.IntegerField(label="Category", required=False,  widget=forms.Select(choices=[(0, 'ANY')], attrs={"class":"form-control"}))
 
 	
 	def __init__(self, *args, **kwargs):

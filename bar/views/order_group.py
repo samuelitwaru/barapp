@@ -50,6 +50,16 @@ def get_order_group(request, id):
     return render(request, "order_group/order-group.html", context)
 
 
+
+@login_required
+def update_order_group(request, id):
+    order_group = OrderGroup.objects.get(id=id)
+    context = {
+        "order_group": order_group
+    }
+    return render(request, 'pages/update-orders.html', context)
+
+
 @login_required
 def open_or_close_order_group(request, id):
     order_group = OrderGroup.objects.get(id=id)

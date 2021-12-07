@@ -25,13 +25,14 @@
 
             <div class="my-auto">
                 <label>&nbsp;</label>
-                <button class="mb-0 my-auto" type="submit">Filter</button>
+                <button class="mb-0 my-auto btn btn-primary" type="submit">Filter</button>
             </div>
         </form>
     </div>
 
     <div class="overflow-auto">
         <table class="table table-bordered table-hover">
+            {% if products %}
         	<thead>
         		<th>Name</th>
         		<th>Brand</th>
@@ -47,11 +48,11 @@
 
         	<tbody>
         		{% for product in products %}
-        		<tr>
+        		<tr class="{%if product.quantity <= product.stock_limit %}table-danger{%endif%}">
                     <td><a href="{% url 'bar:get_product' id=product.id %}" class="nav-link p-0">{{product.name}}</a></td>
         			<td>{{product.brand}}</td>
         			<td align="right">
-                        <span class="{%if product.quantity <= product.stock_limit %}text-danger{%endif%}">{{product.quantity|floatformat:2}}</span>
+                        <span>{{product.quantity|floatformat:2}}</span>
                         <a href="{% url 'bar:add_product_stock' id=product.id %}" class="btn btn-success btn-sm">+ Stock</a>
                     </td>
                     <td>{{product.purchase_metric}}</td>
@@ -67,6 +68,9 @@
         		{% endfor %}
         	</tbody>
         </table>
+        {% else %}
+        <p class="text-muted py-5 text-center">No products fetched</p>
+        {% endif %}
     </div>
 
     {% with objects=products %}

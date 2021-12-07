@@ -14,14 +14,6 @@ from ..utils import STATUS_CHOICES
 def create_orders(request):
     return render(request, 'pages/create-orders.html')
 
-@login_required
-def update_orders(request, order_id):
-    order = OrderGroup.objects.get(id=order_id)
-    context = {
-        "order": order
-    }
-    return render(request, 'pages/update-orders.html', context)
-
 
 @login_required
 def orders(request):

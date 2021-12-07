@@ -29,12 +29,13 @@ urlpatterns = [
 	
 	path('orders', orders, name='orders'),
 	path('orders/create', create_orders, name='create_orders'),
-	path('orders/update/<int:order_group_id>', update_orders, name='update_orders'),
+	# path('orders/update/<int:order_group_id>', update_orders, name='update_orders'),
 	path('orders/update/status', update_order_status, name='update_order_status'),
 	path('orders/sales', get_order_sales, name='get_order_sales'),
 	
 	path('order-groups', get_order_groups, name='get_order_groups'),
 	path('order-groups/<int:id>', get_order_group, name='get_order_group'),
+	path('order-groups/<int:id>/update', update_order_group, name='update_order_group'),
 	path('order-groups/<int:id>/open-or-close', open_or_close_order_group, name='open_or_close_order_group'),
 	path('order-groups/<int:id>/delete', delete_order_group, name='delete_order_group'),
 	
@@ -65,6 +66,7 @@ urlpatterns = [
 
 	path('categories/create', create_category, name='create_category'),
 	path('categories/<int:id>/', get_category, name='get_category'),
+	path('categories/<int:id>/delete', delete_category, name='delete_category'),
 
 	path('notifications', get_notifications, name='get_notifications'),
 	path('notifications/count', get_notification_count, name='get_notification_count'),

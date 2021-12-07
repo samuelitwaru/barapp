@@ -7,11 +7,11 @@ class FilterOrderGroupsForm(forms.Form):
 	date_gte = forms.DateField(label="From", required=False, widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type':"date", "class":"form-control"}))
 	date_lte = forms.DateField(label="To", required=False, widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type':"date", "class":"form-control"}))
 	status = forms.IntegerField(label="Status", required=False,  widget=forms.Select(choices=[(0, 'ANY'), (1, 'OPEN'), (2, 'CLOSED')], attrs={"class":"form-control"}))
-	waiter = forms.IntegerField(label="Status", required=False,  widget=forms.Select(choices=[(0, 'ANY'),], attrs={"class":"form-control"}))
+	waiter = forms.IntegerField(label="Waiter", required=False,  widget=forms.Select(choices=[(0, 'ANY'),], attrs={"class":"form-control"}))
 	
 	def __init__(self, v_model=False, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.fields["waiter"].widget.choices += [(user.id, str(user)) for user in User.objects.exclude(profile=None)]
+		self.fields["waiter"].widget.choices += [(user.id, str(user)) for user in User.objects.exclude(profile=None).filter(groups__name="Waiter")]
 		if v_model:
 			self.add_v_models()
 

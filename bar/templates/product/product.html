@@ -12,11 +12,14 @@
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
             <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
-                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / {{object}}</h3>
+                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Inventory</a> / {{object}}</h3>
             </div>
 
 
             <div class="container-fluid">
+                {% if object.quantity < object.stock_limit %}
+                <marquee><p class="m-0 text-danger">The product has low stock</p></marquee>
+                {% endif %}
                 <div class="p-2 d-flex mb-2 border">
                     <div class="flex-fill my-auto">
                         <div class="px-1 my-auto">

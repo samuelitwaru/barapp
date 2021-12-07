@@ -7,14 +7,15 @@
             {% include 'index/nav.html' %}
             {% include 'index/alert.html' %}
             <div class="d-flex sticky-top bg-light p-2 justify-content-between  border-bottom mb-2">
-                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Products</a> / Products Categories / {{category}}</h3>
+                <h3 class="m-0"><a href="{% url 'bar:get_products' %}" class="nav-link px-1 d-inline">Inventory</a> / Products Categories / {{category}}</h3>
             </div>
 
             <div class="container-fluid m-0">
             	<div class="container" align="center">
                     <div style="max-width: 400px" align="left">
-                        <div class="p-2 border mb-2">
-                            <strong>Details</strong>
+                        <div class="d-flex justify-content-between p-2 border mb-2">
+                            <h5 class="my-auto">Details</h5>
+                            {% include 'category/delete-category.html' %}
                         </div>
                         <form class="bg-light border border-left" method="POST" action="{% url 'bar:get_category' id=category.id %}">
                             {% csrf_token %}
