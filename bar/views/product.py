@@ -183,9 +183,6 @@ def add_product_stock(request, id):
 			product.purchase_price = new_purchase_price
 			product.quantity += quantity
 			product.save()
-			# Product.objects.create(product_name=product.name, purchase_price=new_purchase_price, 
-			# 	purchase_metric=new_purchase_metric.unit, quantity=quantity, product_id=product.id
-			# 	)
 			messages.success(request, "Product stock added")
 			return redirect('bar:get_product', id=product.id)
 
