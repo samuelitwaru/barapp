@@ -44,7 +44,7 @@ class Product(TimeStampedModel):
 	quantity = models.FloatField(default=0)
 	stock_limit = models.FloatField(default=0)
 	purchase_price = models.IntegerField(null=True)
-	metric_system = models.ForeignKey(MetricSystem, null=True, on_delete=models.SET_NULL)
+	metric_system = models.ForeignKey(MetricSystem, on_delete=models.CASCADE)
 	purchase_metric = models.ForeignKey(Metric, null=True, on_delete=models.SET_NULL)
 	categories = models.ManyToManyField('Category', through='ProductCategories', through_fields=('product', 'category'))
 

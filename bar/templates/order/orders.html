@@ -7,19 +7,11 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <div class="p-2">
-            {% render_field filter_orders_form.date_gte %}
-        </div>
-        <div class="p-2">
-            {% render_field filter_orders_form.date_lte %}
-        </div>
-        <div class="p-2">
-            {% render_field filter_orders_form.status %}
-        </div>            
-        <div class="p-2">
-            {% render_field filter_orders_form.waiter %} 
-        </div>
-        <div align="right" class="p-2"><small>&nbsp;</small><input type="submit" value="Filter" class="d-block" @click="filterOrders()" /></div>
+        {% render_field filter_orders_form.date_gte %}
+        {% render_field filter_orders_form.date_lte %}
+        {% render_field filter_orders_form.status %}
+        {% render_field filter_orders_form.waiter %} 
+        <div align="right" class="px-2"><small>&nbsp;</small><input type="submit" value="Filter" class="d-block" @click="filterOrders()" /></div>
     </div>
   </div>
 </nav>
@@ -91,19 +83,24 @@
         
         <div class="tab-pane fade {% if status == 2 %}show active{% endif %}" id="pills-served" role="tabpanel" aria-labelledby="pills-served-tab">
             <div class="list-group rounded-0" v-for="orderGroup in served">
-                <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" @click="showOrderGroup(orderGroup)">
-                    <label class="my-auto">{%verbatim%}{{orderGroup.reference}}{%endverbatim%}</label>
-                    <div align="right">
-                        <small v-if="!orderGroup.closed" class="text-success">open</small>
-                        <small v-if="orderGroup.closed" class="text-danger">closed</small>
-                        <br>
-                        <small class="text-muted">
-                            {%verbatim%}
-                                {{timeSince( new Date(orderGroup.created_at) )}}
-                            {%endverbatim%}
-                        </small>
-                    </div>
-                </button>
+                <div class="d-flex">
+                    <!-- <div class="border my-auto mx-2">
+                        <input type="checkbox" value="orderGroup.id" />
+                    </div> -->
+                    <button type="button" class="d-flex justify-content-between list-group-item list-group-item-action" @click="showOrderGroup(orderGroup)">
+                        <label class="my-auto">{%verbatim%}{{orderGroup.reference}}{%endverbatim%}</label>
+                        <div align="right">
+                            <small v-if="!orderGroup.closed" class="text-success">open</small>
+                            <small v-if="orderGroup.closed" class="text-danger">closed</small>
+                            <br>
+                            <small class="text-muted">
+                                {%verbatim%}
+                                    {{timeSince( new Date(orderGroup.created_at) )}}
+                                {%endverbatim%}
+                            </small>
+                        </div>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="d-none">

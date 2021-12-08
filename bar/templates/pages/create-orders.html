@@ -143,6 +143,9 @@
                 .then(data=>{
                     if (data.status == "success"){
                         alert(data.detail)
+                        barSocket.send(JSON.stringify({
+                            'message': "order_group_created"
+                        }));
                         this.showLoading = false
                         this.clearCart()
                     }

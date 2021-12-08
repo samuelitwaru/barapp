@@ -56,11 +56,13 @@ urlpatterns = [
 
 	path('metric-systems', MetricSystemsPageView.as_view(), name='get_metric_systems'),
 	path('metric-systems/create', create_metric_system, name='create_metric_system'),
+	path('metric-systems/<int:id>/delete', delete_metric_system, name='delete_metric_system'),
 
 	path('products', get_products, name='get_products'),
 	path('products/create', create_product, name='create_product'),
 	path('products/<int:id>/', get_product, name='get_product'),
 	path('products/<int:id>/purchasing/update', update_product_purchasing, name='update_product_purchasing'),
+	path('products/<int:id>/delete', delete_product, name='delete_product'),
 	path('products/<int:id>/categories/update', update_product_categories, name='update_product_categories'),
 	path('products/<int:id>/stock/add', add_product_stock, name='add_product_stock'),
 

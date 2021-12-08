@@ -50,6 +50,7 @@
                 dateLte: '',
                 waiter: 0,
                 status: 0,
+                selectedOrderGroups: []
             }
         },
         created: function() {
@@ -67,7 +68,7 @@
                 return this[1]
             },
             served(){
-                this[2] = this.orderGroups.filter(orderGroup=>orderGroup.status==2)
+                this[2] = this.orderGroups.filter(orderGroup=>orderGroup.status==2).reverse()
                 return this[2]
             },
         },

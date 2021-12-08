@@ -5,6 +5,7 @@ from django.views.generic import TemplateView, DetailView
 from django.contrib import messages
 from ..models import MetricSystem
 from ..forms import CreateMetricSystemForm
+from ..decorators import *
 
 
 class MetricSystemsPageView(TemplateView):
@@ -17,6 +18,8 @@ class MetricSystemsPageView(TemplateView):
 		context["create_metric_system_form"] = create_metric_system_form
 		return context
 
+
+@groups_required("Admin", "Cashier")
 @login_required
 def create_metric_system(request):
 	create_metric_system_form = CreateMetricSystemForm(request.POST)
@@ -26,4 +29,14 @@ def create_metric_system(request):
 		metric_system.save()
 		messages.success(request, "Metric system created.")
 		return redirect("bar:get_metric_systems")
+
+
+
+@groups_required("Admin", "Cashier")
+@login_required
+def delete_metric_system(request, id):
+	metric_system = MetricSystem.objects.get(id=id)
+	metric_system.delete()
+	messages.success(request, "Metric System deleted")
+	return redirect('bar:get_metric_systems')
 

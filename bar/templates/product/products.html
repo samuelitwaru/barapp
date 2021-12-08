@@ -5,79 +5,108 @@
 
 {% block body %}
 	<div id="app">
-        {% include 'index/nav.html' %}
-        {% include 'index/alert.html' %}
-    </div>
-
-    <div class="d-flex bg-light p-2 justify-content-between  border-bottom mb-2">
-        <h3 class="my-auto">Inventory</h3>
-        <a href="{% url 'bar:create_product' %}" class="btn btn-primary">Create Product</a>
-    </div>
-
-    {% include 'category/categories.html' %}
-
-    <div v-show="!showPrint" class="border-top">
-        <form class="d-flex m-0">
-            <div class="d-flex overflow-auto">
-                {% render_field filter_products_form.category %}
-                {% render_field filter_products_form.metric_system %}
+        <div v-show="!showPrint">
+            {% include 'index/nav.html' %}
+            {% include 'index/alert.html' %}
+        </div>
+        <div class="d-flex bg-light p-2 justify-content-between  border-bottom">
+            <h3 class="my-auto">Inventory</h3>
+            <div v-show="!showPrint">
+                <button class="btn btn-dark btn-sm" @click="printPage"><span class="fa fa-print"></span> Print</button>
+                <a href="{% url 'bar:create_product' %}" class="btn btn-primary">Create Product</a>
             </div>
+        </div>
 
-            <div class="my-auto">
-                <label>&nbsp;</label>
-                <button class="mb-0 my-auto btn btn-primary" type="submit">Filter</button>
+        <div v-if="!showPrint">
+            {% include 'category/categories.html' %}
+
+            <div v-show="!showPrint" class="border-top">
+                <form class="d-flex m-0">
+                    <div class="d-flex overflow-auto">
+                        {% render_field filter_products_form.category %}
+                        {% render_field filter_products_form.metric_system %}
+                    </div>
+
+                    <div align="right" class="p-2">
+                        <label>&nbsp;</label>
+                        <input type="submit" value="Filter" class="btn btn-primary d-block" />
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+
+        <div class="overflow-auto">
+            <table class="table table-bordered table-hover">
+                {% if products %}
+            	<thead>
+            		<th>Name</th>
+            		<th>Brand</th>
+                    <th>Stock</th>
+                    <th>Purchase Metric</th>
+            		<th>Purchase Price</th>
+            		<th>Stock Limit</th>
+            		<th>Stock Value</th>
+            		<th>Barcode</th>
+            		<th>Metric System</th>
+            		<th v-show="!showPrint">Action</th>
+            	</thead>
+
+            	<tbody>
+            		{% for product in products %}
+            		<tr class="{%if product.quantity <= product.stock_limit %}table-danger{%endif%}">
+                        <td><a href="{% url 'bar:get_product' id=product.id %}" class="nav-link p-0">{{product.name}}</a></td>
+            			<td>{{product.brand}}</td>
+            			<td align="right">
+                            <span>{{product.quantity|floatformat:2}}</span>
+                            <a v-show="!showPrint" href="{% url 'bar:add_product_stock' id=product.id %}" class="btn btn-success btn-sm">+ Stock</a>
+                        </td>
+                        <td>{{product.purchase_metric}}</td>
+            			<td align="right">{{product.purchase_price|intcomma}}</td>
+                        <td align="right">({{product.default_sale_guide_metric}}) {{product.stock_limit|floatformat:2}}</td>
+            			<td align="right">{{product.stock_value|floatformat:2|intcomma}}</td>
+            			<td align="right">{{product.barcode}}</td>
+            			<td>{{product.metric_system}}</td>
+            			<td v-show="!showPrint">
+                            <a href="{% url 'bar:get_product' id=product.id %}" class="btn btn-primary btn-sm">View</a>
+                        </td>
+            		</tr>
+            		{% endfor %}
+            	</tbody>
+            </table>
+            {% else %}
+            <p class="text-muted py-5 text-center">No products fetched</p>
+            {% endif %}
+        </div>
+
+        {% with objects=products %}
+            {% if objects.has_other_pages %}
+                {% include 'index/paginator.html' %}
+            {% endif %}
+        {% endwith %}
     </div>
 
-    <div class="overflow-auto">
-        <table class="table table-bordered table-hover">
-            {% if products %}
-        	<thead>
-        		<th>Name</th>
-        		<th>Brand</th>
-                <th>Stock</th>
-                <th>Purchase Metric</th>
-        		<th>Purchase Price</th>
-        		<th>Stock Limit</th>
-        		<th>Stock Value</th>
-        		<th>Barcode</th>
-        		<th>Metric System</th>
-        		<th>Action</th>
-        	</thead>
 
-        	<tbody>
-        		{% for product in products %}
-        		<tr class="{%if product.quantity <= product.stock_limit %}table-danger{%endif%}">
-                    <td><a href="{% url 'bar:get_product' id=product.id %}" class="nav-link p-0">{{product.name}}</a></td>
-        			<td>{{product.brand}}</td>
-        			<td align="right">
-                        <span>{{product.quantity|floatformat:2}}</span>
-                        <a href="{% url 'bar:add_product_stock' id=product.id %}" class="btn btn-success btn-sm">+ Stock</a>
-                    </td>
-                    <td>{{product.purchase_metric}}</td>
-        			<td align="right">{{product.purchase_price|intcomma}}</td>
-                    <td align="right">({{product.default_sale_guide_metric}}) {{product.stock_limit}}</td>
-        			<td align="right">{{product.stock_value|floatformat:2|intcomma}}</td>
-        			<td align="right">{{product.barcode}}</td>
-        			<td>{{product.metric_system}}</td>
-        			<td>
-                        <a href="{% url 'bar:get_product' id=product.id %}" class="btn btn-primary btn-sm">View</a>
-                    </td>
-        		</tr>
-        		{% endfor %}
-        	</tbody>
-        </table>
-        {% else %}
-        <p class="text-muted py-5 text-center">No products fetched</p>
-        {% endif %}
-    </div>
+{% endblock %}
 
-    {% with objects=products %}
-        {% if objects.has_other_pages %}
-            {% include 'index/paginator.html' %}
-        {% endif %}
-    {% endwith %}
-
-
+{% block vue %}
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            showPrint: false,
+        },
+        created: function() {
+            
+        },
+        computed: {
+            
+        },
+        methods: {
+            printPage(){
+                this.showPrint = true
+                setTimeout(()=>{print();this.showPrint = false})
+            }
+        }
+    });
+</script>
 {% endblock %}

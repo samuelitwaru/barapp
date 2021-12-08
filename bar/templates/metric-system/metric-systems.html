@@ -58,10 +58,13 @@
                 		</div>
 
                 		<div class="col-md-8 my-2" v-if="metricSystem">
-                            <div class="p-2 border mb-2">
-                                <strong>Metric System:</strong> {%verbatim%}{{metricSystem.name}}{%endverbatim%}
-                                <hr>
-                                <strong>Base Meric</strong>: {%verbatim%}{{baseMetric.unit}} - {{baseMetric.symbol}}{%endverbatim%}
+                            <div class="d-flex justify-content-between p-2 border mb-2 align-items-center">
+                                <div>
+                                    <strong>Metric System:</strong> {%verbatim%}{{metricSystem.name}}{%endverbatim%}
+                                    <hr>
+                                    <strong>Base Meric</strong>: {%verbatim%}{{baseMetric.unit}} - {{baseMetric.symbol}}{%endverbatim%}
+                                </div>
+                                {% include 'metric-system/delete-metric-system.html' %}
                             </div>
                             <div class="overflow-auto">
                     			<table class="table table-bordered">

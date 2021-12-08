@@ -17,7 +17,7 @@
 
 
             <div class="container-fluid">
-                {% if object.quantity < object.stock_limit %}
+                {% if object.quantity <= object.stock_limit %}
                 <marquee><p class="m-0 text-danger">The product has low stock</p></marquee>
                 {% endif %}
                 <div class="p-2 d-flex mb-2 border">
@@ -76,8 +76,9 @@
 
             	<div class="row mt-2">
             		<div class="col-md-6 mb-2">
-                        <div class="p-2 border mb-2">
-                            <h4 class="my-auto">Details</h3>
+                        <div class="d-flex justify-content-between p-2 border mb-2">
+                            <h5 class="my-auto">Details</h5>
+                            {% include 'product/delete-product.html' %}
                         </div>
                         <form class="bg-light border border-left" method="POST" action="{% url 'bar:get_product' id=object.id %}" >
                             {% csrf_token %}

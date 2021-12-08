@@ -194,3 +194,12 @@ def add_product_stock(request, id):
 		"add_product_stock_form": add_product_stock_form,
 	}
 	return render(request, 'product/add-product-stock.html', context)
+
+
+@groups_required("Admin", "Cashier")
+@login_required
+def delete_product(request, id):
+	product = Product.objects.get(id=id)
+	product.delete()
+	messages.success(request, "Product deleted")
+	return redirect('bar:get_products')

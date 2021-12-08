@@ -1,14 +1,16 @@
 {% load app_tags %}
 		<div>
 			<div class="modal-header px-2">
-				<button type="button" class="btn btn-link  p-0" @click="goBack()"><span class="fa fa-angle-left fa-2x"></span></button>
+				<button type="button" v-if="!showPrint" class="btn btn-link  p-0" @click="goBack()"><span class="fa fa-angle-left fa-2x"></span></button>
 				<h5 class="modal-title" id="exampleModalLabel">
 					{%verbatim%}{{currentRef}}{%endverbatim%}
+					<div>
+						<span v-if="!orderGroup.closed" class="badge bg-success my-auto">open</span>
+						<span v-if="orderGroup.closed" class="badge bg-danger my-auto">closed</span>
+					</div>
 				</h5>
 				<div>
-					<span v-if="!orderGroup.closed" class="badge bg-success my-auto">open</span>
-					<span v-if="orderGroup.closed" class="badge bg-danger my-auto">closed</span>
-					<button v-if="!showPrint" class="btn btn-dark btn-sm" @click="printOrder()"><span class="fa fa-print"></span> Print</button>
+					<button v-if="!showPrint" class="btn btn-dark btn-sm" @click="printOrder()"><span class="fa fa-print"></span> <span>Print</span></button>
 				</div>
 			</div>
 
