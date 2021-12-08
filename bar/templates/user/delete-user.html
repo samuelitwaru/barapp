@@ -1,18 +1,18 @@
-<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">Delete</button>
+<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal">Delete</button>
 <!-- Modal -->
-<div class="modal fade" id="deleteCategoryModal">
+<div class="modal fade" id="deleteUserModal">
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <p>Are you sure you want to delete "{{category}}" category?</p>
+            <p>Are you sure you want to delete "{{profile}}"?</p>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <a href="{% url 'bar:delete_category' id=category.id %}" type="button" class="btn btn-danger">Yes, delete</a>
+            <a href="{% url 'bar:delete_user' id=profile.user_id %}" type="button" class="btn btn-danger">Yes, delete</a>
         </div>
     </div>
     </div>

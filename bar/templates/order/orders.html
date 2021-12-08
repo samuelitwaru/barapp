@@ -25,13 +25,13 @@
 </nav>
     <ul class="border sticky-top bg-light justify-content-between nav nav-pills p-2" id="pills-tab" role="tablist" align="center">
         <li class="nav-item" role="presentation">
-            <button class="nav-link {% if status == 0 %}active{% endif %}" id="pills-pending-tab" data-bs-toggle="pill" data-bs-target="#pills-pending" type="button" role="tab" aria-controls="pills-pending" aria-selected="true">PENDING</button>
+            <button class="nav-link {% if status == 0 %}active{% endif %}" id="pills-pending-tab" data-bs-toggle="pill" data-bs-target="#pills-pending" type="button" role="tab" aria-controls="pills-pending" aria-selected="true">PENDING <span class="border border-primary px-1 rounded">{%verbatim%}{{pending.length}}{%endverbatim%}</span></button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link {% if status == 1 %}active{% endif %}" id="pills-ready-tab" data-bs-toggle="pill" data-bs-target="#pills-ready" type="button" role="tab" aria-controls="pills-ready" aria-selected="false">READY</button>
+            <button class="nav-link {% if status == 1 %}active{% endif %}" id="pills-ready-tab" data-bs-toggle="pill" data-bs-target="#pills-ready" type="button" role="tab" aria-controls="pills-ready" aria-selected="false">READY <span class="border border-primary px-1 rounded">{%verbatim%}{{ready.length}}{%endverbatim%}</span></button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link {% if status == 2 %}active{% endif %}" id="pills-served-tab" data-bs-toggle="pill" data-bs-target="#pills-served" type="button" role="tab" aria-controls="pills-served" aria-selected="false">PAID</button>
+            <button class="nav-link {% if status == 2 %}active{% endif %}" id="pills-served-tab" data-bs-toggle="pill" data-bs-target="#pills-served" type="button" role="tab" aria-controls="pills-served" aria-selected="false">PAID <span class="border border-primary px-1 rounded">{%verbatim%}{{served.length}}{%endverbatim%}</span></button>
         </li>
     </ul>
     

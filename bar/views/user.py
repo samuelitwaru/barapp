@@ -8,27 +8,14 @@ from django.contrib.auth import authenticate, login, get_user, logout
 from django.contrib.auth.decorators import login_required
 from ..models import User, Profile
 from ..forms import UpdateUserPermissionsForm, UpdateUserForm, UpdateWaiterForm, CreateUserForm, UpdateUserPasswordForm
+from ..decorators import *
 
 
-# class UsersPageView(TemplateView):
-# 	template_name = "user/users.html"
-
-# 	def get_context_data(self, ** kwargs):
-# 		context = super().get_context_data(**kwargs)
-# 		context['users'] = User.objects.all()
-# 		return context
-
-
-# class UserDetailView(DetailView):
-# 	model = User
-# 	template_name = "user/user.html"
-
-
-
+@groups_required("Admin")
+@login_required
 def create_user(request):
 	create_user_form = CreateUserForm()
 	if request.method=="POST":
-		print("???????????????????/", request.POST)
 		create_user_form = CreateUserForm(request.POST)
 		if create_user_form.is_valid():
 			data = create_user_form.cleaned_data
@@ -39,8 +26,6 @@ def create_user(request):
 			user.save()
 			profile = Profile.objects.create(name=data["name"], email=data["email"], telephone=data["telephone"], user=user)
 			messages.success(request, "User created")
-			# next = request.META.get('HTTP_REFERER', None) or '/'
-			# return HttpResponseRedirect(next)
 			return redirect('bar:update_user', id=user.id)
 
 	context = {
@@ -49,7 +34,7 @@ def create_user(request):
 	return render(request, 'profile/create-profile.html', context)
 
 
-
+@groups_required("Admin")
 @login_required
 def update_user(request, id):
 	user = User.objects.filter(id=id).first()
@@ -72,10 +57,10 @@ def update_user(request, id):
 		profile.save()
 		user.save()
 		messages.success(request, f"User updated.")
-	print(">>>>>>>>>>>>>", update_user_form.errors)
 	return redirect('bar:get_profile', id=profile.id)
 	
 
+@groups_required("Admin")
 @login_required
 def update_user_permissions(request, id):
 	user = User.objects.filter(id=id).first()
@@ -93,6 +78,7 @@ def update_user_permissions(request, id):
 	return redirect('bar:get_profile', id=user.profile.id)
 
 
+@groups_required("Admin")
 @login_required
 def update_user_password(request, id):
 	user = User.objects.filter(id=id).first()
@@ -107,3 +93,10 @@ def update_user_password(request, id):
 	return redirect('bar:get_profile', id=user.profile.id)
 
 
+@groups_required("Admin")
+@login_required
+def delete_user(request, id):
+    user = User.objects.get(id=id)
+    user.delete()
+    messages.success(request, f"User deleted")
+    return redirect('bar:get_profiles')

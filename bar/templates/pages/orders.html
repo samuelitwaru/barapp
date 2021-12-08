@@ -46,7 +46,7 @@
                 timeNow: new Date(),
                 showPrint: false,
                 showOrder: false,
-                dateGte: '',
+                dateGte: new Date().toJSON().slice(0, 10),
                 dateLte: '',
                 waiter: 0,
                 status: 0,
@@ -79,7 +79,17 @@
                 this.timeNow = new Date()
             },
             getOrderGroups(){
-                fetch("/api/order-groups/")
+                data = {
+                    date_gte: this.dateGte,
+                    date_lte: this.dateLte,
+                    waiter: this.waiter,
+                    status: this.status,
+                }
+                queryString = Object.keys(data)
+                .map(key => `${key}=${data[key]}`)
+                .join('&')
+
+                fetch(`/api/order-groups/?${queryString}`)
                 .then(r => r.json())
                 .then(data => {
                     this.orderGroups = data.results

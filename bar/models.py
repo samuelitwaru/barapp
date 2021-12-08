@@ -146,8 +146,6 @@ class Order(TimeStampedModel):
 	order_group = models.ForeignKey(OrderGroup, on_delete=models.CASCADE)
 	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 	sale_guide = models.ForeignKey(SaleGuide, null=True, on_delete=models.SET_NULL)
-	# waiter = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='waiter')
-	# cashier = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='cashier')
 
 	class Meta:
 		permissions = [
@@ -182,10 +180,9 @@ class Profile(models.Model):
     	return ', '.join([group.name for group in self.user.groups.all()])
 
 
-
 def get_user_profile(self):
 	if getattr(self, "profile", None):
 		return self.profile.name
-	return self
+	return self.username
 
 User.add_to_class("__str__", get_user_profile)

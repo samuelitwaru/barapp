@@ -49,6 +49,7 @@ urlpatterns = [
 	path('profiles/<int:id>', get_profile, name='get_profile'),
 	path('users/create', create_user, name='create_user'),
 	path('users/<int:id>', update_user, name='update_user'),
+	path('users/<int:id>/delete', delete_user, name='delete_user'),
 	path('users/<int:id>/password/update', update_user_password, name='update_user_password'),
 	path('users/<int:id>/permissions/update', update_user_permissions, name='update_user_permissions'),
 
@@ -58,7 +59,6 @@ urlpatterns = [
 
 	path('products', get_products, name='get_products'),
 	path('products/create', create_product, name='create_product'),
-	# path('products/<pk>/', ProductDetailView.as_view(), name='get_product'),
 	path('products/<int:id>/', get_product, name='get_product'),
 	path('products/<int:id>/purchasing/update', update_product_purchasing, name='update_product_purchasing'),
 	path('products/<int:id>/categories/update', update_product_categories, name='update_product_categories'),
