@@ -26,9 +26,15 @@ window.onload = function windowLoad(event) {
 	setInterval(fetchNotifications, 30000) 
 }
 
+if (window.location.protocol == "https:") {
+	var ws_scheme = "wss://";
+} else {
+	var ws_scheme = "ws://"
+};
+
 
 const barSocket = new WebSocket(
-	'ws://' + window.location.host + '/ws/bar/'
+	ws_scheme + window.location.host + '/ws/bar/'
 );
 
 barSocket.onopen = function(e){
