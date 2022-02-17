@@ -4,7 +4,9 @@ from django.db.models import F
 from django.views.generic import TemplateView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from ..models import Product, Category, Product
+
+from bar.forms import purchase
+from ..models import Product, Category, Product, Purchase
 from ..forms import UpdateProductForm, UpdateProductPurchasingForm, CreateProductForm, CreateCategoryForm, UpdateProductCategoriesForm, AddProductStockForm, FilterProductsForm
 from ..decorators import *
 
@@ -183,6 +185,8 @@ def add_product_stock(request, id):
 			product.purchase_price = new_purchase_price
 			product.quantity += quantity
 			product.save()
+			purchase = Purchase(quantity=quantity, product_name=product.name, purchase_price=product.purchase_price, purchase_metric=product.purchase_metric.unit, product=product)
+			purchase.save()
 			messages.success(request, "Product stock added")
 			return redirect('bar:get_product', id=product.id)
 

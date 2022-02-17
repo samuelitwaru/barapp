@@ -1,3 +1,4 @@
+from email.policy import default
 from django import forms
 from ..models import User
 from django.contrib.auth import authenticate
@@ -5,7 +6,7 @@ from django.contrib.auth import authenticate
 
 class LoginForm(forms.Form):
 	email = forms.EmailField(required=True)
-	password = forms.CharField(widget=forms.PasswordInput)
+	password = forms.CharField(widget=forms.PasswordInput, initial='amobit123')
 
 
 class SetPasswordForm(forms.Form):

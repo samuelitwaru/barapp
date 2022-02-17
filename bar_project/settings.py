@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'bar',
 ]
 
+APP_NAME = 'Sales App'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

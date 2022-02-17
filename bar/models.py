@@ -177,7 +177,7 @@ class Profile(models.Model):
     	return self.name
 
     def roles(self):
-    	return ', '.join([group.name for group in self.user.groups.all()])
+        return ', '.join([group.name for group in self.user.groups.all()])
 
 
 def get_user_profile(self):

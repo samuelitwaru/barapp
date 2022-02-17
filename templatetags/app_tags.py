@@ -5,6 +5,11 @@ from django.conf import settings
 register = template.Library()
 
 
+@register.simple_tag
+def settings_value(name):
+    return getattr(settings, name, "")
+
+
 @register.filter(name="comma_separator")
 def comma_separator(value):
 	if isinstance(value, int):

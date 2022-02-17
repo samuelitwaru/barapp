@@ -6,6 +6,8 @@ from django.contrib import messages
 from ..models import MetricSystem
 from ..forms import CreateMetricSystemForm
 from ..decorators import *
+from django.utils.decorators import method_decorator
+
 
 
 class MetricSystemsPageView(TemplateView):
@@ -17,6 +19,16 @@ class MetricSystemsPageView(TemplateView):
 		context['metric_systems'] = MetricSystem.objects.all()
 		context["create_metric_system_form"] = create_metric_system_form
 		return context
+	
+	@method_decorator(groups_required("Admin", "Cashier"))
+	def get(self, request, *args, **kwargs):
+		metric_systems = MetricSystem.objects.all()
+		create_metric_system_form = CreateMetricSystemForm()
+		context = {
+			'metric_systems': metric_systems,
+			'create_metric_system_form': create_metric_system_form,
+		}
+		return render(request, "metric-system/metric-systems.html", context)
 
 
 @groups_required("Admin", "Cashier")

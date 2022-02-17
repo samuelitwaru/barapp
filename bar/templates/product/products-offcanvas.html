@@ -9,7 +9,7 @@
 			<input class="form-control form-control-lg border-primary" type="search" placeholder="Search" aria-label="Search" v-model="searchString" v-on:input="searchProduct">
 		</div>
 		
-		<div class="d-flex flex-nowrap py-1 overflow-auto hide-scroll">
+		<div class="d-flex flex-nowrap py-1 overflow-auto">
 		 	<div class="p-2 mx-1 btn btn-outline-primary text-nowrap" @click="showCategory()">All</div>
 
 		 	<div class="p-2 mx-1 btn btn-outline-primary text-nowrap" v-for="category in categories" @click="showCategory(category)">

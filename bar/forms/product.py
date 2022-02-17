@@ -53,6 +53,9 @@ class UpdateProductPurchasingForm(ModelForm):
 	class Meta:
 		model = Product
 		fields = ("purchase_metric", "purchase_price")
+		labels = {
+            "purchase_price": "Unit Price",
+        }
 
 	def __init__(self, product, *args, **kwargs):
 		super().__init__(*args, **kwargs)
